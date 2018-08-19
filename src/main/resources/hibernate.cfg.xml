@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>       
+  <session-factory>
+    <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+    <property name="show_sql">true</property>
+    <mapping class="com.TM470.domain.Company"/>
+    <mapping class="com.TM470.domain.Location"/>
+    <mapping class="com.TM470.domain.LocationArea"/>
+    <mapping class="com.TM470.domain.Room"/>
+    <mapping class="com.TM470.domain.PrivateArea"/>
+    <mapping class="com.TM470.domain.PublicArea"/>
+    <mapping class="com.TM470.domain.Job"/>
+    <mapping class="com.TM470.domain.User"/>
+    <mapping class="com.TM470.domain.Guest"/>
+    <mapping class="com.TM470.domain.Staff"/>
+	<mapping class="com.TM470.domain.Contractor"/>
+    <mapping class="com.TM470.domain.Element"/>
+    <mapping class="com.TM470.domain.Appliance"/>
+    <mapping class="com.TM470.domain.Furnishing"/>
+    <mapping class="com.TM470.domain.Update"/>
+    
+    <!--  <mapping resource="company.hbm.xml"/>-->
+  </session-factory>
+</hibernate-configuration>
