@@ -1,5 +1,6 @@
 package com.TM470.domain;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -10,10 +11,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Proxy;
+
 
 
 @Entity
 @Table (name= "updates" )
+@Proxy(lazy=false)
 public class Update{
 	
 	@Id
@@ -28,12 +32,60 @@ public class Update{
 	private Date dateEntered;
 
 	@ManyToOne
-	@JoinColumn(name="update_about",nullable=false)
-	private Job updateAbout; 
+	@JoinColumn(name="update_about")
+	private Job updateAbout;
 	
+	//set attributes
+	public void setAttributesAfterCreation(String message,Job job) {
+		
+		Date date = new Date();
+		String modifiedDate= new SimpleDateFormat("dd-MM-yyyy").format(date);
+		
+		this.setMessage(message);
+		this.setUpdateAbout(job);
+		this.setDateEntered(date);
+		
+	}
+
 	
 	//Auto-Generated getters and setters
 	//
+	
+	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	public Date getDateEntered() {
+		return dateEntered;
+	}
+
+	public void setDateEntered(Date dateEntered) {
+		this.dateEntered = dateEntered;
+	}
+
+	public Job getUpdateAbout() {
+		return updateAbout;
+	}
+
+	public void setUpdateAbout(Job updateAbout) {
+		this.updateAbout = updateAbout;
+	} 
+	
+	
+	
 
 	//End of Auto-Generated getters and setters
 	//

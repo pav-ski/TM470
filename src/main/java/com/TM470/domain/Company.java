@@ -1,5 +1,6 @@
 package com.TM470.domain;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -11,10 +12,13 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Proxy;
+
 
 
 @Entity
 @Table (name= "company" )
+@Proxy(lazy=false)
 public class Company{
 	
 	@Id
@@ -25,13 +29,13 @@ public class Company{
 	@Column(name="name")
 	private String name;
 	
-	@OneToMany(fetch = FetchType.EAGER, mappedBy="belongsTo", cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.EAGER, mappedBy="belongsTo", cascade = CascadeType.ALL)//fetch = FetchType.EAGER, 
 	private Set<Location> haveLocations;
 	
-	@OneToMany(fetch = FetchType.EAGER, mappedBy="isUsingSystemOf", cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.EAGER, mappedBy="isUsingSystemOf", cascade = CascadeType.ALL)//fetch = FetchType.EAGER, 
 	private Set<User> hasUsers;
 	
-	@OneToMany(fetch = FetchType.EAGER, mappedBy="worksFor", cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.EAGER, mappedBy="worksFor", cascade = CascadeType.ALL)//fetch = FetchType.EAGER, 
 	private Set<Staff> employs;
 	
 	//Add another location to haveLocations

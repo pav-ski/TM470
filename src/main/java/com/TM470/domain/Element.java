@@ -15,10 +15,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Proxy;
+
 @Entity
 @Table (name= "elements" )
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="element_type")
+@Proxy(lazy=false)
 public abstract class Element{
 	
 	@Id
@@ -33,7 +36,7 @@ public abstract class Element{
 	private Double score;
 	
 	@Column(name = "date_bought")
-	private Date dateBought;
+	private String dateBought;
 	
 	@ManyToOne
 	@JoinColumn(name="is_in",nullable=false)
@@ -68,11 +71,11 @@ public abstract class Element{
 		this.score = score;
 	}
 
-	public Date getDateBought() {
+	public String getDateBought() {
 		return dateBought;
 	}
 
-	public void setDateBought(Date dateBought) {
+	public void setDateBought(String dateBought) {
 		this.dateBought = dateBought;
 	}
 

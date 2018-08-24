@@ -6,7 +6,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -16,11 +15,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Proxy;
+
 
 @Entity
 @Table (name= "users" )
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="user_type")
+@Proxy(lazy=false)
 public abstract class User{
 	
 	@Id
@@ -38,9 +40,23 @@ public abstract class User{
 	@JoinColumn(name="is_using_system_of",nullable=false)
 	private Company isUsingSystemOf;
 	
-	@OneToMany(fetch = FetchType.EAGER, mappedBy="postedBy", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy="postedBy", cascade = CascadeType.ALL)//fetch = FetchType.EAGER, 
 	private Set<Job> postedA;
 	
+	//Method used for reporting the issue and creating a job
+	//forwards another message to selected area
+	public Job reportIssue(String description,LocationArea area,Element element,int severity) {
+		
+		return area.createJob(description, element, severity, this);
+		
+	}
+	
+	//UC2 Request Update 
+	public void requestUpdate(Job job,String message,Update update) {
+		System.out.println("IN USER");
+		job.requestUpdate(message,this,update);
+		
+	}
 	
 	//Auto-Generated getters and setters
 	//

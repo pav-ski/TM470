@@ -12,17 +12,20 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Proxy;
+
 
 @Entity
 @DiscriminatorValue("3")
 @Table (name= "users" )
+@Proxy(lazy=false)
 public class Contractor extends User{
 	
 
 	@Column(name="on_site")
 	private Boolean onSite;
 	
-	@OneToMany(fetch = FetchType.EAGER, mappedBy="requires", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy="requires", cascade = CascadeType.ALL)//fetch = FetchType.EAGER, 
 	private Set<Job> outcallTo;	
 
 	

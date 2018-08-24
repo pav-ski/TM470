@@ -6,13 +6,14 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Proxy;
+
 @Entity
 @DiscriminatorValue("1")
 @Table (name= "location_areas" )
+@Proxy(lazy=false)
 public class Room extends LocationArea {
 	
-	@Column(name = "room_score")
-	private Double roomScore;
 	
 	@OneToOne(mappedBy= "staysIn")
 	private Guest isOccupiedBy;
@@ -22,7 +23,7 @@ public class Room extends LocationArea {
 	public void createRoom(String description,String areaID, Double roomScore, Location location) {
 		this.setDescriptionOfArea(description);
 		this.setAreaID(areaID);
-		this.setRoomScore(roomScore);
+		this.setRoomScore();
 		this.setIsInLocation(location);
 		
 		
@@ -34,13 +35,7 @@ public class Room extends LocationArea {
 	//
 	//
 	
-	public Double getRoomScore() {
-		return roomScore;
-	}
 
-	public void setRoomScore(Double roomScore) {
-		this.roomScore = roomScore;
-	}
 
 
 	public Guest getIsOccupiedBy() {

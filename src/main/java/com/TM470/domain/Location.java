@@ -1,5 +1,6 @@
 package com.TM470.domain;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -12,13 +13,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import com.TM470.dao.LocationDAO;
+import org.hibernate.annotations.Proxy;
 
 
 @Entity
 @Table(name="locations")
+@Proxy(lazy=false)
 public class Location {
 	
 
@@ -38,11 +39,17 @@ public class Location {
 	@JoinColumn(name="company_id",nullable=false)
 	private Company belongsTo;
 	
-	@OneToMany(fetch = FetchType.EAGER, mappedBy="isInLocation", cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.EAGER, mappedBy="isInLocation", cascade = CascadeType.ALL)//fetch = FetchType.EAGER, 
 	private Set<LocationArea> hasAreas;
 	
-	@OneToMany(fetch = FetchType.EAGER, mappedBy="reserved", cascade = CascadeType.ALL)
-	private Set<Guest> hasGuest;
+	@OneToMany(mappedBy="reserved", cascade = CascadeType.ALL)//fetch = FetchType.EAGER, 
+	private List<Guest> hasGuest;
+	
+	//create new rooms and set forward attribute values
+	public void newRoom(String description,String areaID,Double roomScore) {
+		Room room = new Room();
+		room.createRoom(description, areaID, roomScore, this);
+	}
 
 	
 	//Auto-generated getters and setters
@@ -89,11 +96,11 @@ public class Location {
 		this.hasAreas = hasAreas;
 	}
 
-	public Set<Guest> getHasGuest() {
+	public List<Guest> getHasGuest() {
 		return hasGuest;
 	}
 
-	public void setHasGuest(Set<Guest> hasGuest) {
+	public void setHasGuest(List<Guest> hasGuest) {
 		this.hasGuest = hasGuest;
 	}
 	

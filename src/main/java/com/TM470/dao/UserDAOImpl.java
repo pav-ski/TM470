@@ -1,21 +1,17 @@
 package com.TM470.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.awt.print.Book;
 import java.util.List;
-
-import javax.sql.DataSource;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.TM470.dao.UserDAO;
-import com.TM470.domain.LocationArea;
+import com.TM470.domain.Guest;
+import com.TM470.domain.Staff;
 import com.TM470.domain.User;
 
 @Component
@@ -25,8 +21,11 @@ public class UserDAOImpl implements UserDAO{
 	
 	
 	
-	
+	@Autowired
     private SessionFactory sessionFactory;
+	
+	
+	
     
     public UserDAOImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
@@ -76,6 +75,23 @@ public class UserDAOImpl implements UserDAO{
     	}
     	
     }
+    
+    @Override
+    @Transactional
+    public Staff getStaff(int id) {
+    	Session session = this.sessionFactory.getCurrentSession();
+    	Staff staff = (Staff) session.load(Staff.class, new Integer(id));
+    	return staff;
+    }
+    
+    @Override
+    @Transactional
+    public Guest getGuest(int id) {
+    	Session session = this.sessionFactory.getCurrentSession();
+    	Guest guest = (Guest) session.load(Guest.class, new Integer(id));
+    	return guest;
+    }
+    
 
 	
 }

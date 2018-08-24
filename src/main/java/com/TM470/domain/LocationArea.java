@@ -18,10 +18,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Proxy;
+
 @Entity
 @Table (name= "location_areas" )
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="area_type")
+@Proxy(lazy=false)
 public abstract class LocationArea{
 	
 	@Id
@@ -35,18 +38,31 @@ public abstract class LocationArea{
 	@Column(name = "area_number")
 	private String areaID;
 	
+	@Column(name = "room_score")
+	private Double roomScore;
+	
 	@ManyToOne
 	@JoinColumn(name="location_id",nullable=false)
 	private Location isInLocation;
 	
-	@OneToMany(fetch = FetchType.EAGER, mappedBy="isFor", cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.EAGER,mappedBy="isFor", cascade = CascadeType.ALL)
 	private Set<Job> hasJobs;
 	
-	@OneToMany(fetch = FetchType.EAGER, mappedBy="wasFor", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy="wasFor", cascade = CascadeType.ALL)//fetch = FetchType.EAGER, 
 	private Set<Job> hadJobs;
 	
-	@OneToMany(fetch = FetchType.EAGER, mappedBy="isIn", cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.EAGER,mappedBy="isIn", cascade = CascadeType.ALL)//fetch = FetchType.EAGER, 
 	private Set<Element> hasElements;
+	
+	//Method for creation of Job
+	public Job createJob(String description,Element element, int severity, User user) {
+		Job job = new Job();
+		return job.setAttributesAndCommit(description,element,severity,this, user);
+	}
+	
+	public Set<Staff> getStaff() {
+		return this.getIsInLocation().getBelongsTo().getEmploys();
+	}
 	
 	//Auto-Generated setters and getters
 	//
@@ -108,7 +124,19 @@ public abstract class LocationArea{
 		this.hasElements = hasElements;
 	}
 	
-	
+	public Double getRoomScore() {
+		return roomScore;
+	}
+
+	public void setRoomScore() {
+		Double score = 0.0;
+		for(Element eachElement:this.getHasElements()) {
+			System.out.println("score =" + eachElement.getScore());
+			score = score + eachElement.getScore();
+		}
+		System.out.println("final :" + score + "divided by " + this.getHasElements().size());
+		this.roomScore = score/this.getHasElements().size();
+	}
 	
 	//
 	//

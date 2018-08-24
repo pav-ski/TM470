@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -7,26 +8,16 @@
 <title>Insert title here</title>
 </head>
 <body>
+Welcome to login page<br>
 
-Welcome to dashboard
+<center>
+		<h2>Select user:</h2>
+		<h3>
+			<a href="dashboard?id=4">Pawel</a>
+			<a href="dashboard?id=6">Bob</a>
+		</h3>
+	</center>
 
-<div align="center">
-            <h1>Contact List</h1>
-            <table border="1">
-                <th>No</th>
-                <th>Username</th>
-                <th>Email</th>
-                 
-                <c:forEach var="company" items="${companyList}" varStatus="status">
-                <tr>
-                    <td>${status.index + 1}</td>
-                    <td>${company.name}</td>
-                    <td>${company.id}</td>
-                             
-                </tr>
-                </c:forEach>             
-            </table>
-        </div>
 
 
 </body>

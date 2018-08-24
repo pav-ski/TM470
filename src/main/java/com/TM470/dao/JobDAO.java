@@ -2,9 +2,11 @@ package com.TM470.dao;
 
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
+
 import com.TM470.domain.Job;
 
-
+@Repository
 public interface JobDAO {
 	
 	public void addJob(Job job);

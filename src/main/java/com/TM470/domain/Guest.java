@@ -1,15 +1,17 @@
 package com.TM470.domain;
 
-import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Proxy;
+
 @Entity
 @DiscriminatorValue("1")
 @Table (name= "users" )
+@Proxy(lazy=false)
 public class Guest extends User {
 	
 	@OneToOne
@@ -21,7 +23,14 @@ public class Guest extends User {
 	@JoinColumn(name="reserved")
 	private Location reserved;
 	
-	
+	//Constructor setters
+	public void constructorSetter(String name, String password,Company company, Location location)
+	{
+		this.setName(name);
+		this.setPassword(password);
+		this.setIsUsingSystemOf(company);
+		this.setReserved(location);
+	}
 	
 	//Auto-Generated getters and setters
 	//

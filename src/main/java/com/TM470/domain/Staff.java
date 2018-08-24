@@ -1,27 +1,25 @@
 package com.TM470.domain;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Proxy;
 
 
 @Entity
 @DiscriminatorValue("2")
 @Table (name= "users" )
+@Proxy(lazy=false)
 public class Staff extends User{
 	
 	@Column(name="on_shift")
@@ -34,14 +32,22 @@ public class Staff extends User{
 	@JoinColumn(name="works_for",nullable=false)
 	private Company worksFor;
 	
-	@OneToMany(fetch = FetchType.EAGER, mappedBy="willBeFixedBy", cascade = CascadeType.ALL)
-	private Set<Job> isAttendingTo;
+	@OneToMany(mappedBy="willBeFixedBy", cascade = CascadeType.ALL)//fetch = FetchType.EAGER, 
+	private List<Job> isAttendingTo;
 	
 	@OneToMany
 	@JoinColumn(name="can_outcall")
 	private Set<Contractor> canOutcall;
 
-
+	//Setter for required fields
+	
+	public void constructorSetter(String name,String password,Company company) {
+		this.setName(name);
+		this.setPassword(password);
+		this.setWorksFor(company);
+		this.setIsUsingSystemOf(company);
+		
+	}
 	
 	//Auto-Generated getters and setters
 	//
@@ -71,11 +77,11 @@ public class Staff extends User{
 		this.worksFor = worksFor;
 	}
 
-	public Set<Job> getIsAttendingTo() {
+	public List<Job> getIsAttendingTo() {
 		return isAttendingTo;
 	}
 
-	public void setIsAttendingTo(Set<Job> isAttendingTo) {
+	public void setIsAttendingTo(List<Job> isAttendingTo) {
 		this.isAttendingTo = isAttendingTo;
 	}
 

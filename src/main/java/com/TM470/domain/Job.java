@@ -1,5 +1,7 @@
 package com.TM470.domain;
 
+
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Set;
 
@@ -10,13 +12,25 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.hibernate.annotations.Proxy;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.TM470.dao.JobDAO;
+
+
 
 @Entity
 @Table(name = "jobs")
-public class Job {
+@Proxy(lazy=false)
+public class Job implements Listener{
+	
 	
 	@Id
 	@GeneratedValue
@@ -39,11 +53,11 @@ public class Job {
 	private Boolean updateRequested;
 	
 	@ManyToOne
-	@JoinColumn(name="is_for",nullable=false)
+	@JoinColumn(name="is_for")
 	private LocationArea isFor;
 	
 	@ManyToOne
-	@JoinColumn(name="was_for",nullable=false)
+	@JoinColumn(name="was_for")
 	private LocationArea wasFor;	
 
 
@@ -52,16 +66,97 @@ public class Job {
 	private User postedBy;
 	
 	@ManyToOne
-	@JoinColumn(name="attending_staff",nullable=false)
+	@JoinColumn(name="attending_staff")
 	private Staff willBeFixedBy;
 
 	@ManyToOne
-	@JoinColumn(name="requires",nullable=false)
+	@JoinColumn(name="requires")
 	private Contractor requires; 
 	
-	@OneToMany(fetch = FetchType.EAGER, mappedBy="updateAbout", cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.EAGER,mappedBy="updateAbout", cascade = CascadeType.ALL)
 	private Set<Update> hasUpdate;
+	
+	@OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+	@JoinTable(name="subscribers",joinColumns = @JoinColumn( name="job_id"),inverseJoinColumns = @JoinColumn( name="user_id")
+    )
+	private Set<User> hasSubscribers;
+	
+	@OneToOne
+	@JoinColumn(name="is_faulty")
+	private Element isFaulty;
+	
+	@Autowired
+	@Transient
+	private JobDAO jobDAO;
+	
+	
+	//Method assisting job creation with setting attribute values
+	//Uses JobDAO object to commit new object to database
+	public Job setAttributesAndCommit(String description,Element element,int severity,LocationArea area,User user) {
+	
 
+		Date date = new Date();
+		String modifiedDate= new SimpleDateFormat("dd-MM-yyyy").format(date);
+		
+		this.setActive(true);
+		this.setDescription(description);
+		this.setIsFaulty(element);
+		element.setScore((double)severity);
+		this.setIsFor(area);
+		this.setPostedBy(user);
+		this.setDatePosted(date);
+		if(user.getClass()==Guest.class) {
+			this.addObserver(user);
+		}
+		this.addStaffObservers(area.getStaff());
+		return this;
+		
+	}
+	
+	//UC 2 Request Update
+	//
+	public void requestUpdate(String message,User user,Update update) {
+		this.setUpdateRequested(true);
+		this.hasUpdate.add(update);
+		System.out.println("IN JOB");
+		update.setAttributesAfterCreation(message, this);
+		
+		if(user.getClass()==Staff.class) {
+			updateStaff();
+		}
+		else if(user.getClass()==Guest.class) {
+			updateAll();
+		}
+		
+		
+	}
+	
+	//Listener interface methods
+	public void addObserver(User user) {
+		this.hasSubscribers.add(user);
+	}
+	
+	public void addStaffObservers(Set<Staff> staff) {
+		this.hasSubscribers.addAll(staff);
+	}
+	
+	public void removeObserver() {
+		
+	}
+	
+	
+	public void updateStaff() {
+		
+	}
+	
+	public void updateGuest() {
+		
+	}
+	
+	public void updateAll() {
+		
+	}
+	//End of Listener interface methods
 	
 	//Auto-Generated getters and setters
 	//
@@ -153,6 +248,40 @@ public class Job {
 	public void setRequires(Contractor requires) {
 		this.requires = requires;
 	}
+
+	public Set<Update> getHasUpdate() {
+		return hasUpdate;
+	}
+
+	public void setHasUpdate(Set<Update> hasUpdate) {
+		this.hasUpdate = hasUpdate;
+	}
+
+	public Element getIsFaulty() {
+		return isFaulty;
+	}
+
+	public void setIsFaulty(Element isFaulty) {
+		this.isFaulty = isFaulty;
+	}
+
+	public JobDAO getJobDAO() {
+		return jobDAO;
+	}
+
+	public void setJobDAO(JobDAO jobDAO) {
+		this.jobDAO = jobDAO;
+	}
+
+	public Set<User> getHasSubscribers() {
+		return hasSubscribers;
+	}
+
+	public void setHasSubscribers(Set<User> hasSubscribers) {
+		this.hasSubscribers = hasSubscribers;
+	}
+
+	
 	
 	
 	
