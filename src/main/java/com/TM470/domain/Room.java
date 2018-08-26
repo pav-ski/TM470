@@ -23,7 +23,7 @@ public class Room extends LocationArea {
 	public void createRoom(String description,String areaID, Double roomScore, Location location) {
 		this.setDescriptionOfArea(description);
 		this.setAreaID(areaID);
-		this.setRoomScore();
+		this.updateAreaScore();
 		this.setIsInLocation(location);
 		
 		

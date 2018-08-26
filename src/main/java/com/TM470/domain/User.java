@@ -46,7 +46,7 @@ public abstract class User{
 	//Method used for reporting the issue and creating a job
 	//forwards another message to selected area
 	public Job reportIssue(String description,LocationArea area,Element element,int severity) {
-		
+		System.out.println(area);
 		return area.createJob(description, element, severity, this);
 		
 	}

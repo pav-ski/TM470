@@ -14,6 +14,7 @@ public interface JobDAO {
 	public List<Job> list();
 	public Job getJobById(int id);
 	public void removeJob(int id);
+	public void saveOrUpdate(Job job);
 	
 	
 

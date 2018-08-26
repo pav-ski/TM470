@@ -17,6 +17,7 @@ import com.TM470.dao.LocationAreaDAO;
 import com.TM470.dao.LocationDAO;
 import com.TM470.dao.UserDAO;
 import com.TM470.domain.Company;
+import com.TM470.domain.Element;
 import com.TM470.domain.Job;
 import com.TM470.domain.Location;
 import com.TM470.domain.LocationArea;
@@ -58,13 +59,11 @@ public class HomeController {
         ModelAndView model = new ModelAndView("home");
         model.addObject("companyList", listCompany);
         
-        for(Location eachLocation:locationDAO.list()) {
-        	System.out.println("Updating Scores");
-        	for(LocationArea eachArea:eachLocation.getHasAreas()) {
-        		eachArea.setRoomScore();
-        		locationAreaDAO.updateLocationArea(eachArea);
-        	}
+        for(Element eachElement: elementDAO.list()) {
+        	eachElement.setScore(5.0);
+        	elementDAO.updateElement(eachElement);
         }
+       
  
 
         return "index";

@@ -47,33 +47,23 @@ http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
 
 	
 	<bean id="companyDAO" class="com.TM470.dao.CompanyDAOImpl">
-    <constructor-arg>
-        <ref bean="sessionFactory" />
-    </constructor-arg>
+
 	</bean>
 	
 	<bean id="locationDAO" class="com.TM470.dao.LocationDAOImpl">
-	<constructor-arg>
-        <ref bean="sessionFactory" />
-    </constructor-arg>
+
 	</bean>
 	
 	<bean id="locationAreaDAO" class="com.TM470.dao.LocationAreaDAOImpl">
-	<constructor-arg>
-        <ref bean="sessionFactory" />
-    </constructor-arg>
+
 	</bean>
 	
 	<bean id="userDAO" class="com.TM470.dao.UserDAOImpl">
-	<constructor-arg>
-        <ref bean="sessionFactory" />
-    </constructor-arg>
+
 	</bean>
 	
 	<bean id="jobDAO" class="com.TM470.dao.JobDAOImpl">
-	<constructor-arg>
-        <ref bean="sessionFactory" />
-    </constructor-arg>
+
 	</bean>
 	
 	

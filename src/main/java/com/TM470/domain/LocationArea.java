@@ -57,7 +57,9 @@ public abstract class LocationArea{
 	//Method for creation of Job
 	public Job createJob(String description,Element element, int severity, User user) {
 		Job job = new Job();
+		System.out.println(this);
 		return job.setAttributesAndCommit(description,element,severity,this, user);
+		
 	}
 	
 	public Set<Staff> getStaff() {
@@ -128,7 +130,7 @@ public abstract class LocationArea{
 		return roomScore;
 	}
 
-	public void setRoomScore() {
+	public void updateAreaScore() {
 		Double score = 0.0;
 		for(Element eachElement:this.getHasElements()) {
 			System.out.println("score =" + eachElement.getScore());
@@ -136,6 +138,7 @@ public abstract class LocationArea{
 		}
 		System.out.println("final :" + score + "divided by " + this.getHasElements().size());
 		this.roomScore = score/this.getHasElements().size();
+		System.out.println(" = " + roomScore);
 	}
 	
 	//

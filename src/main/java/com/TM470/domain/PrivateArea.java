@@ -19,7 +19,7 @@ public class PrivateArea extends LocationArea {
 	public void createArea(String description,String areaID, Double roomScore, Location location) {
 		this.setDescriptionOfArea(description);
 		this.setAreaID(areaID);
-		this.setRoomScore();
+		this.updateAreaScore();
 		this.setIsInLocation(location);
 		
 		

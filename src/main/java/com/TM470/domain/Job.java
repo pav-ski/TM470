@@ -3,6 +3,7 @@ package com.TM470.domain;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -73,7 +74,7 @@ public class Job implements Listener{
 	@JoinColumn(name="requires")
 	private Contractor requires; 
 	
-	@OneToMany(fetch = FetchType.EAGER,mappedBy="updateAbout", cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.EAGER,mappedBy="updateAbout", cascade = CascadeType.ALL)//
 	private Set<Update> hasUpdate;
 	
 	@OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
@@ -85,22 +86,23 @@ public class Job implements Listener{
 	@JoinColumn(name="is_faulty")
 	private Element isFaulty;
 	
-	@Autowired
-	@Transient
-	private JobDAO jobDAO;
+
 	
 	
 	//Method assisting job creation with setting attribute values
 	//Uses JobDAO object to commit new object to database
 	public Job setAttributesAndCommit(String description,Element element,int severity,LocationArea area,User user) {
+		
+		this.hasSubscribers = new HashSet<User>();
 	
-
+	
 		Date date = new Date();
 		String modifiedDate= new SimpleDateFormat("dd-MM-yyyy").format(date);
 		
 		this.setActive(true);
 		this.setDescription(description);
 		this.setIsFaulty(element);
+		this.setSeverity(severity);
 		element.setScore((double)severity);
 		this.setIsFor(area);
 		this.setPostedBy(user);
@@ -108,7 +110,13 @@ public class Job implements Listener{
 		if(user.getClass()==Guest.class) {
 			this.addObserver(user);
 		}
+		System.out.println(area.getStaff());
+		
 		this.addStaffObservers(area.getStaff());
+		
+		System.out.println(element);
+		element.adjustFaultyElementScore(severity);
+		System.out.println("Element score is :" + element.getScore());
 		return this;
 		
 	}
@@ -137,7 +145,11 @@ public class Job implements Listener{
 	}
 	
 	public void addStaffObservers(Set<Staff> staff) {
-		this.hasSubscribers.addAll(staff);
+		System.out.println(staff);
+		System.out.println(this);
+		Set<Staff> staffSet = new HashSet<Staff>();
+		staffSet.addAll(staff);
+		this.hasSubscribers.addAll(staffSet);
 	}
 	
 	public void removeObserver() {
@@ -265,13 +277,6 @@ public class Job implements Listener{
 		this.isFaulty = isFaulty;
 	}
 
-	public JobDAO getJobDAO() {
-		return jobDAO;
-	}
-
-	public void setJobDAO(JobDAO jobDAO) {
-		this.jobDAO = jobDAO;
-	}
 
 	public Set<User> getHasSubscribers() {
 		return hasSubscribers;

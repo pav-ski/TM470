@@ -11,7 +11,7 @@ import com.TM470.domain.User;
 
 
 @Service
-public class JobService {
+public class LocationAreaService {
 	
 	@Autowired
 	private JobDAO jobDAO;

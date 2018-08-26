@@ -41,7 +41,20 @@ public abstract class Element{
 	@ManyToOne
 	@JoinColumn(name="is_in",nullable=false)
 	private LocationArea isIn;
-
+	
+	
+	
+	public void adjustFaultyElementScore(int severity) {
+		if(score-severity >= 0) {
+			this.setScore(score);
+		}
+		else if(score-severity < 0) {
+			this.setScore(0.0);
+		}
+		
+		isIn.updateAreaScore();
+		System.out.println("Updated area score is: " + isIn.getRoomScore() );
+	}
 	
 	//Auto-Generated setters and getters
 	//
