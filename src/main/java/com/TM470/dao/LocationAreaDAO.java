@@ -11,6 +11,7 @@ public interface LocationAreaDAO {
 	public List<LocationArea> list();
 	public LocationArea getLocationAreaById(int id);
 	public void removeLocationArea(int id);
+	public void refresh(LocationArea area);
 	
 	
 

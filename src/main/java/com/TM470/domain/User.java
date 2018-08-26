@@ -43,13 +43,7 @@ public abstract class User{
 	@OneToMany(mappedBy="postedBy", cascade = CascadeType.ALL)//fetch = FetchType.EAGER, 
 	private Set<Job> postedA;
 	
-	//Method used for reporting the issue and creating a job
-	//forwards another message to selected area
-	public Job reportIssue(String description,LocationArea area,Element element,int severity) {
-		
-		return area.createJob(description, element, severity, this);
-		
-	}
+
 	
 	//UC2 Request Update 
 	public void requestUpdate(Job job,String message,Update update) {

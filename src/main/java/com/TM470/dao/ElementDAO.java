@@ -11,6 +11,7 @@ public interface ElementDAO {
 	public List<Element> list();
 	public Element getElementById(int id);
 	public void removeElement(int id);
+	public void refresh(Element element);
 	
 	
 

@@ -5,22 +5,23 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.TM470.domain.Element;
-import com.TM470.domain.LocationArea;
 
 @Repository
 @EnableTransactionManagement
 public class ElementDAOImpl implements ElementDAO{
 	
 		
-	    private SessionFactory sessionFactory;
+		@Autowired
+    	private SessionFactory sessionFactory;
 	    
-	    public ElementDAOImpl(SessionFactory sessionFactory) {
-	        this.sessionFactory = sessionFactory;
+	    public ElementDAOImpl() {
+
 	    }
 
 
@@ -67,6 +68,16 @@ public class ElementDAOImpl implements ElementDAO{
 	    	}
 	    	
 	    }
+	    
+	    @Override
+	    @Transactional
+	    public void refresh(Element element) {
+	    	Session session = this.sessionFactory.getCurrentSession();
+	    	session.refresh(element);
+
+	    }
+	    
+
 
 
 	}

@@ -5,6 +5,7 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,10 +18,11 @@ import com.TM470.domain.Update;
 public class UpdateDAOImpl implements UpdateDAO{
 	
 		
-	    private SessionFactory sessionFactory;
+		@Autowired
+    	private SessionFactory sessionFactory;
 	    
-	    public UpdateDAOImpl(SessionFactory sessionFactory) {
-	        this.sessionFactory = sessionFactory;
+	    public UpdateDAOImpl() {
+
 	    }
 	    
 

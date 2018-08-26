@@ -46,9 +46,9 @@ public class Location {
 	private List<Guest> hasGuest;
 	
 	//create new rooms and set forward attribute values
-	public void newRoom(String description,String areaID,Double roomScore) {
+	public void newRoom(String description,String areaID) {
 		Room room = new Room();
-		room.createRoom(description, areaID, roomScore, this);
+		room.createRoom(description, areaID, this);
 	}
 
 	

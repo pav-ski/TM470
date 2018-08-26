@@ -5,6 +5,7 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,12 +18,16 @@ import com.TM470.domain.Job;
 public class JobDAOImpl implements JobDAO{
 	
 
-		
-	    private SessionFactory sessionFactory;
+		@Autowired
+		private SessionFactory sessionFactory;
 	    
-	    public JobDAOImpl(SessionFactory sessionFactory) {
-	        this.sessionFactory = sessionFactory;
+	    public JobDAOImpl() {
+	    	
 	    }
+	    
+	    //public JobDAOImpl(SessionFactory sessionFactory) {
+	    //    this.sessionFactory = sessionFactory;
+	    //}
 	    
 
 	    @Override
@@ -70,6 +75,13 @@ public class JobDAOImpl implements JobDAO{
 	    		session.delete(job);
 	    	}
 	    	
+	    }
+	    
+	    @Override
+	    @Transactional
+	    public void saveOrUpdate(Job job) {
+	    	Session session = this.sessionFactory.getCurrentSession();
+	    	session.saveOrUpdate(job);
 	    }
 
 

@@ -54,11 +54,7 @@ public abstract class LocationArea{
 	@OneToMany(fetch = FetchType.EAGER,mappedBy="isIn", cascade = CascadeType.ALL)//fetch = FetchType.EAGER, 
 	private Set<Element> hasElements;
 	
-	//Method for creation of Job
-	public Job createJob(String description,Element element, int severity, User user) {
-		Job job = new Job();
-		return job.setAttributesAndCommit(description,element,severity,this, user);
-	}
+
 	
 	public Set<Staff> getStaff() {
 		return this.getIsInLocation().getBelongsTo().getEmploys();
@@ -128,15 +124,11 @@ public abstract class LocationArea{
 		return roomScore;
 	}
 
-	public void setRoomScore() {
-		Double score = 0.0;
-		for(Element eachElement:this.getHasElements()) {
-			System.out.println("score =" + eachElement.getScore());
-			score = score + eachElement.getScore();
-		}
-		System.out.println("final :" + score + "divided by " + this.getHasElements().size());
-		this.roomScore = score/this.getHasElements().size();
+	public void setRoomScore(Double roomScore) {
+		this.roomScore = roomScore;
 	}
+
+	
 	
 	//
 	//

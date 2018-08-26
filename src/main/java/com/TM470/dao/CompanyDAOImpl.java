@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,10 +17,11 @@ import com.TM470.domain.Company;
 @EnableTransactionManagement
 public class CompanyDAOImpl implements CompanyDAO{
 	
+	@Autowired
     private SessionFactory sessionFactory;
     
-    public CompanyDAOImpl(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
+    public CompanyDAOImpl() {
+
     }
     
 

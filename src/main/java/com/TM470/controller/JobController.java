@@ -24,6 +24,7 @@ import com.TM470.domain.Job;
 import com.TM470.domain.LocationArea;
 import com.TM470.domain.User;
 import com.TM470.formModel.JobForm;
+import com.TM470.service.JobService;
 
 @Controller
 public class JobController {
@@ -52,6 +53,9 @@ public class JobController {
 	@Autowired
 	private JobDAO jobDAO;
 	
+	@Autowired 
+	private JobService jobService;
+	
 	
 	 @RequestMapping(value = "/jobForm", method = RequestMethod.GET)
 	    public ModelAndView showForm(@RequestParam(value = "id", required = false) int id,Model model) {
@@ -64,7 +68,7 @@ public class JobController {
 		 		model.addAttribute("areaId", area.getAreaID());
 		 		
 		 		Job newJob = new Job();
-		 		System.out.println(newJob.getJobDAO());
+
 		 		
 				
 				
@@ -89,6 +93,8 @@ public class JobController {
 	            System.out.println(jobForm.getDescription());
 	            System.out.println(model.get("description").toString());
 	            
+	            jobService.postJob(jobForm.getDescription(), Integer.parseInt(jobForm.getIsFaulty()), jobForm.getSeverity(), Integer.parseInt(model.get("isFor").toString()) );
+	            
 	            //Html does not pass objects, element id in form of string is converted to int
 	            //and located by elementDAO in database.
 	            Element element = elementDAO.getElementById(Integer.parseInt(jobForm.getIsFaulty()));
@@ -101,15 +107,34 @@ public class JobController {
 	            String description = jobForm.getDescription();
 	            int severity = jobForm.getSeverity();
 	            
-	            
+	            System.out.println(homeController.user);
 	            User user = homeController.user;
 	            //user.reportIssue(description, area, element, severity);
 
 	            
-	            Job newJob = user.reportIssue(jobForm.getDescription(),area,element,jobForm.getSeverity());
-
 	            
-	            jobDAO.addJob(newJob);
+	            
+	            //element.adjustFaultyElementScore(severity);
+	            //elementDAO.updateElement(element);
+	            //System.out.println("Element id" + element.getId() + " score  :" +element.getScore());
+	            //for (Element eachElement: area.getHasElements()) {
+	            //	System.out.println("Scores for elements in the collection : "+eachElement.getId() +"   " + eachElement.getScore());
+	            //}
+	            //LocationArea area2 = locationAreaDAO.getLocationAreaById(element.getIsIn().getId());
+	            
+	            //for (Element eachElement: area2.getHasElements()) {
+	            //	System.out.println("Scores for elements in the reloaded collection : "+eachElement.getId() +"   " + eachElement.getScore());
+	            //}
+	            //elementDAO.refresh(element);
+	            //locationAreaDAO.refresh(area);
+	            
+	            //area.updateAreaScore();
+	            //jobDAO.saveOrUpdate(newJob);
+	            //elementDAO.updateElement(element);
+	            System.out.println("And actual score for the update:");
+	            System.out.println(area);
+	            System.out.println(area.getRoomScore());
+	            //locationAreaDAO.updateLocationArea(area);
 	            
 	            
 	             System.out.println("POST submitted");

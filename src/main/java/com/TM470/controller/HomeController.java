@@ -19,9 +19,9 @@ import com.TM470.dao.UserDAO;
 import com.TM470.domain.Company;
 import com.TM470.domain.Job;
 import com.TM470.domain.Location;
-import com.TM470.domain.LocationArea;
 import com.TM470.domain.Staff;
 import com.TM470.domain.User;
+import com.TM470.service.UserService;
 
 @Controller
 public class HomeController {
@@ -36,6 +36,9 @@ public class HomeController {
 	
 	@Autowired 
 	private UserDAO userDAO;
+	
+	@Autowired 
+	private UserService userService;
 	
 	@Autowired 
 	private LocationAreaDAO locationAreaDAO;
@@ -58,13 +61,7 @@ public class HomeController {
         ModelAndView model = new ModelAndView("home");
         model.addObject("companyList", listCompany);
         
-        for(Location eachLocation:locationDAO.list()) {
-        	System.out.println("Updating Scores");
-        	for(LocationArea eachArea:eachLocation.getHasAreas()) {
-        		eachArea.setRoomScore();
-        		locationAreaDAO.updateLocationArea(eachArea);
-        	}
-        }
+       
  
 
         return "index";
@@ -80,10 +77,12 @@ public class HomeController {
 		
 		if(id==4)
 		{
+			userService.setSessionUser(id);
 			user = userDAO.getStaff(id);
 		}
 		else if(id==6)
 		{
+			userService.setSessionUser(id);
 			user = userDAO.getGuest(id);
 		}
 		

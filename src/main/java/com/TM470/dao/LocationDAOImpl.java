@@ -5,6 +5,7 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,10 +17,11 @@ import com.TM470.domain.Location;
 public class LocationDAOImpl implements LocationDAO{
 	
 		
-	    private SessionFactory sessionFactory;
+		@Autowired
+    	private SessionFactory sessionFactory;
 	    
-	    public LocationDAOImpl(SessionFactory sessionFactory) {
-	        this.sessionFactory = sessionFactory;
+	    public LocationDAOImpl() {
+	     
 	    }
 	    
 

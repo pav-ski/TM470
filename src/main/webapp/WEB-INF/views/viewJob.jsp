@@ -21,6 +21,7 @@ View Detailed job
 					<td>${job.datePosted}</td>
 					<td>${job.postedBy.name}</td>
 					<td><a href="">View Location</a></td>
+					<td><a href="completeJob?${job.jobId}"><input type="submit" value="Item repaired" name="button" /></a></td>  
 
                              
                 </tr>            

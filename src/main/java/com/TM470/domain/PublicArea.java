@@ -16,10 +16,9 @@ public class PublicArea extends LocationArea {
 	
 	
 	//After creation of room object this method sets attributes as required
-	public void createArea(String description,String areaID, Double roomScore, Location location) {
+	public void createArea(String description,String areaID, Location location) {
 		this.setDescriptionOfArea(description);
 		this.setAreaID(areaID);
-		this.setRoomScore();
 		this.setIsInLocation(location);
 		
 		

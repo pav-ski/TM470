@@ -41,6 +41,9 @@ public abstract class Element{
 	@ManyToOne
 	@JoinColumn(name="is_in",nullable=false)
 	private LocationArea isIn;
+	
+	
+	
 
 	
 	//Auto-Generated setters and getters
