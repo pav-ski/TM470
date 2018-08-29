@@ -24,7 +24,12 @@ import com.TM470.domain.Job;
 import com.TM470.domain.LocationArea;
 import com.TM470.domain.User;
 import com.TM470.formModel.JobForm;
+import com.TM470.formModel.UpdateForm;
+import com.TM470.service.ElementService;
 import com.TM470.service.JobService;
+import com.TM470.service.LocationAreaService;
+import com.TM470.service.LocationService;
+import com.TM470.service.UpdateService;
 
 @Controller
 public class JobController {
@@ -32,29 +37,22 @@ public class JobController {
 	
 	
 	@Autowired
-	private CompanyDAO companyDAO;
-	
-	@Autowired
-	private LocationDAO locationDAO;
-	
-	@Autowired 
-	private UserDAO userDAO;
-	
-	@Autowired 
-	private LocationAreaDAO locationAreaDAO;
-	
-	@Autowired
-	private ElementDAO elementDAO;
-	
-	@Autowired
 	private HomeController homeController;
-	
-	
-	@Autowired
-	private JobDAO jobDAO;
 	
 	@Autowired 
 	private JobService jobService;
+	
+	@Autowired 
+	private UpdateService updateService;
+	
+	@Autowired 
+	private LocationService locationService;
+	
+	@Autowired 
+	private LocationAreaService areaService;
+	
+	@Autowired 
+	private ElementService elementSerivce;
 	
 	
 	 @RequestMapping(value = "/jobForm", method = RequestMethod.GET)
@@ -62,12 +60,12 @@ public class JobController {
 		 
 		 	//jobForm is the page to be viewed.
 		 		ModelAndView mav = new ModelAndView("jobForm","jobModel",new JobForm());
-		 		LocationArea area = locationAreaDAO.getLocationAreaById(id);
+		 		LocationArea area = areaService.getById(id);
 		 		model.addAttribute("elements", area.getHasElements());
 		 		model.addAttribute("area", area);
 		 		model.addAttribute("areaId", area.getAreaID());
 		 		
-		 		Job newJob = new Job();
+
 
 		 		
 				
@@ -97,11 +95,11 @@ public class JobController {
 	            
 	            //Html does not pass objects, element id in form of string is converted to int
 	            //and located by elementDAO in database.
-	            Element element = elementDAO.getElementById(Integer.parseInt(jobForm.getIsFaulty()));
+	            Element element = elementSerivce.getById(Integer.parseInt(jobForm.getIsFaulty()));
 	            
 	            //LocationArea is also taken out from the model map, converted to String, parsed to int
 	            //obtained value is then used to get an object form repository
-	            LocationArea area = locationAreaDAO.getLocationAreaById(Integer.parseInt(model.get("isFor").toString()));
+	            LocationArea area = areaService.getById(Integer.parseInt(model.get("isFor").toString()));
 	            
 	            
 	            String description = jobForm.getDescription();
@@ -109,44 +107,18 @@ public class JobController {
 	            
 	            System.out.println(homeController.user);
 	            User user = homeController.user;
-	            //user.reportIssue(description, area, element, severity);
 
 	            
 	            
-	            
-	            //element.adjustFaultyElementScore(severity);
-	            //elementDAO.updateElement(element);
-	            //System.out.println("Element id" + element.getId() + " score  :" +element.getScore());
-	            //for (Element eachElement: area.getHasElements()) {
-	            //	System.out.println("Scores for elements in the collection : "+eachElement.getId() +"   " + eachElement.getScore());
-	            //}
-	            //LocationArea area2 = locationAreaDAO.getLocationAreaById(element.getIsIn().getId());
-	            
-	            //for (Element eachElement: area2.getHasElements()) {
-	            //	System.out.println("Scores for elements in the reloaded collection : "+eachElement.getId() +"   " + eachElement.getScore());
-	            //}
-	            //elementDAO.refresh(element);
-	            //locationAreaDAO.refresh(area);
-	            
-	            //area.updateAreaScore();
-	            //jobDAO.saveOrUpdate(newJob);
-	            //elementDAO.updateElement(element);
-	            System.out.println("And actual score for the update:");
-	            System.out.println(area);
-	            System.out.println(area.getRoomScore());
-	            //locationAreaDAO.updateLocationArea(area);
-	            
-	            
 	             System.out.println("POST submitted");
-	        
-	        //Creation and return of new Job object to repository via commit() method
+
 
 	           return "/dashboard";
 	        }
 	    
 	    @RequestMapping("/viewJobs")
 		public String goToJobs(@RequestParam(value = "id", required = true)int id,Model model) {
-	    	LocationArea area = locationAreaDAO.getLocationAreaById(id);
+	    	LocationArea area = areaService.getById(id);
 	    	Set<Job> jobs = area.getHasJobs();
 	    	model.addAttribute("jobs", jobs);
 	    	
@@ -155,13 +127,50 @@ public class JobController {
 	    
 	    @RequestMapping("/viewJob")
 		public String goToJob(@RequestParam(value = "id", required = true)int id,Model model) {
-	    	Job job = jobDAO.getJobById(id);
+	    	
+	    	Job job = jobService.getById(id);
 	    	model.addAttribute("job", job);
 	    	
 	    	return "viewJob";
 	    }
 	
-	
+	    @RequestMapping(value = "/completeJob", method = RequestMethod.GET)
+	    public ModelAndView completeJob(@RequestParam(value = "id", required = false) int id,Model model) {
+	    		
+	    	
+	    		
+		 	//jobForm is the page to be viewed.
+		 		ModelAndView mav = new ModelAndView("completeJob","updateForm",new UpdateForm());
+		 		Job job = jobService.getById(id);
+		 		mav.addObject("job", job);
+
+		 		System.out.println(job);
+		 		
+				
+				
+
+		        return mav;
+	    }
+	    
+	    @RequestMapping(value = "/postCompleteJob", method = RequestMethod.POST)
+        public String postCompleteJob(@ModelAttribute("updateForm")UpdateForm updateForm, @ModelAttribute("job")Job job,
+    		      BindingResult result, ModelMap model) {
+    	       if (result.hasErrors()) {
+    	    	   System.out.println("ERRORS");
+        	         return "error";
+                  }
+
+    	       User user = homeController.user;
+    	       job = jobService.getById(Integer.parseInt(updateForm.getUpdateAbout()));
+    	       updateService.postUpdate(user, job, updateForm.getMessage());
+    	       jobService.completeJob(job);
+    	       
+    	      
+             System.out.println("POST submitted");
+
+
+           return "/dashboard";
+        }
 	
 	
 	

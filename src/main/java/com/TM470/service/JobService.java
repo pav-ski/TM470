@@ -1,8 +1,6 @@
 package com.TM470.service;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashSet;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,7 +8,6 @@ import org.springframework.stereotype.Service;
 import com.TM470.dao.JobDAO;
 import com.TM470.dao.UpdateDAO;
 import com.TM470.domain.Element;
-import com.TM470.domain.Guest;
 import com.TM470.domain.Job;
 import com.TM470.domain.LocationArea;
 import com.TM470.domain.User;
@@ -34,7 +31,7 @@ public class JobService {
 	@Autowired
 	private LocationAreaService locationAreaService;
 	
-	
+	//Methods for interaction with database
 	public void update(Job job) {
 		jobDAO.updateJob(job);
 	}
@@ -42,6 +39,17 @@ public class JobService {
 	public void saveOrUpdate(Job job) {
 		jobDAO.saveOrUpdate(job);
 	}
+	
+	public List<Job> getJobs() {
+		return jobDAO.list();
+		
+	}
+	
+	public Job getById(int id) {
+		return jobDAO.getJobById(id);
+	}
+	//End of database methods
+	
 	
 	public void postJob(String description,int isFaulty, int severity, int isFor) {
 		Element element = elementService.getById(isFaulty);
@@ -65,6 +73,14 @@ public class JobService {
 		
 		
 		
+	}
+	
+	public void completeJob(Job job) {
+		
+		elementService.adjustFaultyElementScore(job.getIsFaulty(), 5);
+		
+		job.completeJob();
+		update(job);
 	}
 	
 		//Method assisting job creation with setting attribute values

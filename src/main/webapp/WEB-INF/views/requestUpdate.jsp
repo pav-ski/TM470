@@ -12,7 +12,7 @@
 
 	<div align="center">
 	The id is ${job.jobId}
-	<form:form method="POST" action="postUpdate?id${job.jobId}" modelAttribute="updateForm">
+	<form:form method="POST" action="postRequestUpdate?id${job.jobId}" modelAttribute="updateForm">
 	<div><form:textarea path="message"/></div>
 	<form:hidden path="updateAbout" value="${job.jobId}" name="id"/>
 	<input type="submit">

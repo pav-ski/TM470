@@ -10,7 +10,7 @@
 <body>
 
 <div align="center">
-            <h1>You are in location:</h1>
+            <h1>You are in location:${name}</h1>
             <table border="1">
             	<th>Room description</th>
                 <th>Room number</th>

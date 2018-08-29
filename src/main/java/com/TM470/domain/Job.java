@@ -132,6 +132,34 @@ public class Job implements Listener{
 		
 	}
 	
+	
+	//UC 3 Post Update
+		//
+		public void postUpdate(String message,User user,Update update) {
+			this.setUpdateRequested(false);
+			this.hasUpdate.add(update);
+			System.out.println("IN JOB");
+			update.setAttributesAfterCreation(message, this);
+			
+			if(user.getClass()==Staff.class) {
+				updateAll();
+			}
+			else if(user.getClass()==Contractor.class) {
+				updateAll();
+			}
+			
+			
+		}
+		
+		//UC 5 Repair issue
+		public void completeJob() {
+			
+			setActive(false);
+			setWasFor(getIsFor());
+			setIsFor(null);
+			
+		}
+	
 	//Listener interface methods
 	public void addObserver(User user) {
 		this.hasSubscribers.add(user);

@@ -9,7 +9,7 @@
 </head>
 <body>
 
-<div align="left">
+<div align="center">
             <h1>Location List</h1>
             <table border="1">
                 <th>Name</th>
@@ -17,7 +17,7 @@
                 <c:forEach var="eachlocation" items="${locations}" varStatus="status">
                 <tr>
 					<td>${eachlocation.name}</td>
-					<td><a href="location?id=${eachlocation.locationId}">View Location</a></td>
+					<td><a href="location?id=${eachlocation.locationId}&name=${eachlocation.name}">View Location</a></td>
 
                              
                 </tr>
@@ -27,9 +27,14 @@
         
         
         <div align="center">
-            <h1>Job List</h1>
+            <h1>Active Job List</h1>
             <table border="1">
                 <th>Job</th>
+                <th>Date Posted</th>
+                <th>Location</th>
+                <th>Area</th>
+                <th>Posted by</th>
+                <th>Faulty Element</th>
                  
                 <c:forEach var="eachJob" items="${jobs}" varStatus="status">
                 <tr>
@@ -40,6 +45,32 @@
 					<td>${eachJob.postedBy.name}</td>
 					<td>${eachJob.isFaulty.description}</td>
 					<td><a href="viewJob?id=${eachJob.jobId}">View Job</a></td>
+
+                             
+                </tr>
+                </c:forEach>             
+            </table>
+        </div>
+        
+        <div align="center">
+            <h1>Past Job List</h1>
+            <table border="1">
+                <th>Completed Job</th>
+                <th>Date Posted</th>
+                <th>Location</th>
+                <th>Area</th>
+                <th>Posted by</th>
+                <th>Faulty Element</th>
+                 
+                <c:forEach var="pastJob" items="${pastJobs}" varStatus="status">
+                <tr>
+					<td>${pastJob.description}</td>
+					<td>${pastJob.datePosted}</td>
+					<td>${pastJob.wasFor.isInLocation.name}</td>
+					<td>${pastJob.wasFor.areaID}</td>
+					<td>${pastJob.postedBy.name}</td>
+					<td>${pastJob.isFaulty.description}</td>
+					<td><a href="viewJob?id=${pastJob.jobId}">View Job</a></td>
 
                              
                 </tr>

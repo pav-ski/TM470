@@ -12,6 +12,7 @@ public interface UpdateDAO {
 	public List<Update> list();
 	public Location getUpdateById(int id);
 	public void removeUpdate(int id);
+	public void saveOrUpdate(Update update);
 	
 	
 

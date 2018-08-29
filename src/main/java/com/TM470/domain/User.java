@@ -6,6 +6,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -40,7 +41,7 @@ public abstract class User{
 	@JoinColumn(name="is_using_system_of",nullable=false)
 	private Company isUsingSystemOf;
 	
-	@OneToMany(mappedBy="postedBy", cascade = CascadeType.ALL)//fetch = FetchType.EAGER, 
+	@OneToMany(fetch = FetchType.EAGER, mappedBy="postedBy", cascade = CascadeType.ALL)
 	private Set<Job> postedA;
 	
 
@@ -55,6 +56,17 @@ public abstract class User{
 	//Auto-Generated getters and setters
 	//
 	//
+	
+	//UC2 Request Update 
+		public void postUpdate(Job job,String message,Update update) {
+			System.out.println("IN USER");
+			job.postUpdate(message,this,update);
+			
+		}
+		
+		//Auto-Generated getters and setters
+		//
+		//
 	
 	public int getUserId() {
 		return userId;

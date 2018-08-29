@@ -6,23 +6,18 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Insert title here</title>
+<title>Request an update</title>
 </head>
 <body>
 
-<div align="center">
+	<div align="center">
 	The id is ${job.jobId}
-	
-	<form:form method="POST" action="postCompleteJob" modelAttribute="updateForm">
-	<div><form:input path="message"/></div>
+	<form:form method="POST" action="postUpdate?id${job.jobId}" modelAttribute="updateForm">
+	<div><form:textarea path="message"/></div>
 	<form:hidden path="updateAbout" value="${job.jobId}" name="id"/>
-	<input type="submit" value="Complete Job" name="button" >
+	<input type="submit">
 	</form:form>
-	
 </div>
-
-
-    
         
         
         

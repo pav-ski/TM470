@@ -18,40 +18,22 @@ import com.TM470.dao.LocationAreaDAO;
 import com.TM470.dao.LocationDAO;
 import com.TM470.dao.UserDAO;
 import com.TM470.domain.Job;
-import com.TM470.domain.LocationArea;
 import com.TM470.domain.User;
 import com.TM470.formModel.UpdateForm;
+import com.TM470.service.JobService;
 import com.TM470.service.UpdateService;
 
 @Controller
 public class UpdateController {
 
-	
-	
-	@Autowired
-	private CompanyDAO companyDAO;
-	
-	@Autowired
-	private LocationDAO locationDAO;
-	
-	@Autowired 
-	private UserDAO userDAO;
-	
-	@Autowired 
-	private LocationAreaDAO locationAreaDAO;
-	
-	@Autowired
-	private ElementDAO elementDAO;
-	
 	@Autowired
 	private HomeController homeController;
 	
 	@Autowired
 	private UpdateService updateService;
-	
-	
+
 	@Autowired
-	private JobDAO jobDAO;
+	private JobService jobService;
 	
 	
 	 @RequestMapping(value = "/requestUpdate", method = RequestMethod.GET)
@@ -59,10 +41,7 @@ public class UpdateController {
 		 
 
 		 		ModelAndView mav = new ModelAndView("requestUpdate","updateForm",new UpdateForm());
-		 		System.out.println(new UpdateForm());
-		 		System.out.println(mav.getModelMap());
-		 		System.out.println(model);
-		 		Job job = jobDAO.getJobById(id);
+		 		Job job = jobService.getById(id);
 		 		model.addAttribute("job", job);
 		 		
 		 		
@@ -72,7 +51,7 @@ public class UpdateController {
 		        return mav;
 	    }
 	 
-	 @RequestMapping(value = "/postUpdate", method = RequestMethod.POST)
+	 @RequestMapping(value = "/postRequestUpdate", method = RequestMethod.POST)
      public String postUpdateRequest(@ModelAttribute("updateForm")UpdateForm updateForm, 
  		      BindingResult result, ModelMap model) {
  	       if (result.hasErrors()) {
@@ -83,19 +62,59 @@ public class UpdateController {
  	    //The form backing bean is filled with values from the form
          model.addAttribute("message", updateForm.getMessage());
          model.addAttribute("updateAbout", updateForm.getUpdateAbout());
-         System.out.println(updateForm.getMessage());
-         System.out.println(updateForm.getUpdateAbout());
          
          //Html does not pass objects, element id in form of string is converted to int
          //and located by elementDAO in database.
-         Job job = jobDAO.getJobById(Integer.parseInt(updateForm.getUpdateAbout()));
+         Job job = jobService.getById(Integer.parseInt(updateForm.getUpdateAbout()));
          
          User user = homeController.user;
-         System.out.println(user);
-         //user.reportIssue(description, area, element, severity);
          
          updateService.requestUpdate(user,job,updateForm.getMessage());
-         //user.
+
+         
+         
+          System.out.println("POST submitted");
+     
+          //Creation and return of new Job object to repository via commit() method
+
+        return "/dashboard";
+     }
+	 
+	 
+	 @RequestMapping(value = "/update", method = RequestMethod.GET)
+	    public ModelAndView update(@RequestParam(value = "id", required = false) Integer id,Model model) {
+		 
+
+		 		ModelAndView mav = new ModelAndView("update","updateForm",new UpdateForm());
+		 		Job job = jobService.getById(id);
+		 		model.addAttribute("job", job);
+		 		
+		 		
+				
+				
+
+		        return mav;
+	    }
+	    
+	 @RequestMapping(value = "/postUpdate", method = RequestMethod.POST)
+     public String postUpdate(@ModelAttribute("updateForm")UpdateForm updateForm, 
+ 		      BindingResult result, ModelMap model) {
+ 	       if (result.hasErrors()) {
+ 	    	   System.out.println("ERRORS");
+     	         return "error";
+               }
+ 	       
+ 	    //The form backing bean is filled with values from the form
+         model.addAttribute("message", updateForm.getMessage());
+         model.addAttribute("updateAbout", updateForm.getUpdateAbout());
+         
+         //Html does not pass objects, element id in form of string is converted to int
+         //and located by elementDAO in database.
+         Job job = jobService.getById(Integer.parseInt(updateForm.getUpdateAbout()));
+         
+         User user = homeController.user;
+         
+         updateService.postUpdate(user,job,updateForm.getMessage());
          
          
           System.out.println("POST submitted");
@@ -104,9 +123,6 @@ public class UpdateController {
 
         return "/dashboard";
      }
-	    
-	    
-
 	
 	
 	

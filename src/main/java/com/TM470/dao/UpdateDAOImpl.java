@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.TM470.domain.Job;
 import com.TM470.domain.Location;
 import com.TM470.domain.Update;
 
@@ -68,6 +69,13 @@ public class UpdateDAOImpl implements UpdateDAO{
 	    		session.delete(update);
 	    	}
 	    	
+	    }
+	    
+	    @Override
+	    @Transactional
+	    public void saveOrUpdate(Update update) {
+	    	Session session = this.sessionFactory.getCurrentSession();
+	    	session.saveOrUpdate(update);
 	    }
 
 

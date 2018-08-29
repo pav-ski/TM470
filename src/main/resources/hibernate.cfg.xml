@@ -21,7 +21,7 @@
     <mapping class="com.TM470.domain.Appliance"/>
     <mapping class="com.TM470.domain.Furnishing"/>
     <mapping class="com.TM470.domain.Update"/>
-    
+    <mapping class="com.TM470.domain.UpdateRequest"/>
     <!--  <mapping resource="company.hbm.xml"/>-->
   </session-factory>
 </hibernate-configuration>

@@ -6,29 +6,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.TM470.dao.CompanyDAO;
-import com.TM470.dao.ElementDAO;
-import com.TM470.dao.LocationAreaDAO;
-import com.TM470.dao.LocationDAO;
-import com.TM470.domain.User;
+import com.TM470.service.LocationAreaService;
 
 @Controller
 public class ElementController {
 
 	
 	
-	@Autowired
-	private CompanyDAO companyDAO;
-	
-	@Autowired
-	private LocationDAO locationDAO;
-	
-	
 	@Autowired 
-	LocationAreaDAO locationAreaDAO;
-	
-	@Autowired 
-	ElementDAO elementDAO;
+	private LocationAreaService areaService;
 	
 	@Autowired 
 	private HomeController homeController;
@@ -40,8 +26,7 @@ public class ElementController {
 		
 		
 
-		model.addAttribute("elements", locationAreaDAO.getLocationAreaById(id).getHasElements());
-		
+		model.addAttribute("elements",areaService.getById(id).getHasElements());		
 		
 	
 		

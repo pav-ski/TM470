@@ -19,6 +19,7 @@ public class Guest extends User {
 	private Room staysIn;
 	
 	
+	//Needs to be one to many at Guest end!
 	@OneToOne
 	@JoinColumn(name="reserved")
 	private Location reserved;

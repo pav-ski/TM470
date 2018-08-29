@@ -21,7 +21,7 @@ View Detailed job
 					<td>${job.datePosted}</td>
 					<td>${job.postedBy.name}</td>
 					<td><a href="">View Location</a></td>
-					<td><a href="completeJob?${job.jobId}"><input type="submit" value="Item repaired" name="button" /></a></td>  
+					<td><a href="completeJob?id=${job.jobId}"><input type="submit" value="Item repaired" name="button" /></a></td>  
 
                              
                 </tr>            
@@ -35,12 +35,9 @@ View Detailed job
                  
                 <c:forEach var="eachUpdate" items="${job.hasUpdate}" varStatus="status">
                 <tr>
-					<td>${eachUpdate}</td>
-					<td>${eachUpdate}</td>
-					<td>${eachUpdate}</td>
-					<td>${eachUpdate}</td>
-					<td>${eachUpdate}</td>
-					<td>${eachUpdate}</td>
+					<td>${eachUpdate.message}</td>
+					<td>${eachUpdate.dateEntered}</td>
+					
 
                              
                 </tr>
@@ -51,6 +48,7 @@ View Detailed job
         
         <div align="center">
         <a href="requestUpdate?id=${job.jobId}"><input type="submit" value="Request update" name="button" />
+        <td><a href="update?id=${job.jobId}"><input type="submit" value="Provide Update" name="button" /></a></td>
    		 </div>
         
         
