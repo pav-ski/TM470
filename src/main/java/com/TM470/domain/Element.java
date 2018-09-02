@@ -2,7 +2,6 @@ package com.TM470.domain;
 
 
 
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;

@@ -57,6 +57,7 @@ public abstract class LocationArea{
 
 	
 	public Set<Staff> getStaff() {
+		System.out.println(this.getIsInLocation().getBelongsTo().getEmploys());
 		return this.getIsInLocation().getBelongsTo().getEmploys();
 	}
 	

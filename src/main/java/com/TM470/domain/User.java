@@ -1,5 +1,6 @@
 package com.TM470.domain;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -12,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -34,6 +37,9 @@ public abstract class User{
 	@Column(name="name")
 	private String name;
 	
+	@Column(name="username")
+	private String username;
+	
 	@Column(name="password")
 	private String password;
 	
@@ -44,29 +50,46 @@ public abstract class User{
 	@OneToMany(fetch = FetchType.EAGER, mappedBy="postedBy", cascade = CascadeType.ALL)
 	private Set<Job> postedA;
 	
+	
+	@ManyToMany(fetch = FetchType.EAGER,cascade = { CascadeType.ALL })
+    @JoinTable(name = "user_notification", 
+    	joinColumns = { @JoinColumn(name = "iduser_notification") }, 
+        inverseJoinColumns = { @JoinColumn(name = "notification_id") }
+    )
+    Set<Notification> hasNotifications = new HashSet<Notification>();
+	
+	@ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+	@JoinTable(name="subscription", joinColumns = {@JoinColumn(name="id_user")},
+				inverseJoinColumns = {@JoinColumn(name="idsubscription")})
+	private Set<Job> subscribedTo = new HashSet<>();
+
 
 	
 	//UC2 Request Update 
 	public void requestUpdate(Job job,String message,Update update) {
-		System.out.println("IN USER");
+		
+		//Send message to linked job object
 		job.requestUpdate(message,this,update);
 		
 	}
-	
-	//Auto-Generated getters and setters
-	//
-	//
-	
-	//UC2 Request Update 
+
+	//UC3 Post Update 
 		public void postUpdate(Job job,String message,Update update) {
 			System.out.println("IN USER");
 			job.postUpdate(message,this,update);
 			
 		}
+	
 		
-		//Auto-Generated getters and setters
-		//
-		//
+		
+		
+		
+		
+		
+		
+	//Auto-Generated getters and setters
+	//
+	//
 	
 	public int getUserId() {
 		return userId;
@@ -107,6 +130,24 @@ public abstract class User{
 	public void setPostedA(Set<Job> postedA) {
 		this.postedA = postedA;
 	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public Set<Notification> getHasNotifications() {
+		return hasNotifications;
+	}
+
+	public void setHasNotifications(Set<Notification> hasNotification) {
+		this.hasNotifications = hasNotification;
+	}
+
+
 	
 	
 	

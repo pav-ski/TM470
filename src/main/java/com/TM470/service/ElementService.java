@@ -42,5 +42,12 @@ public class ElementService {
 		System.out.println("Updated area score is: " + element.getIsIn().getRoomScore() );
 	}
 	
+	public void resetElementScore(Element element) {
+		double score = 5.0;
+		element.setScore(score);
+		areaService.updateAreaScore(element.getIsIn());
+		update(element);
+	}
+	
 
 }

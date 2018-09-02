@@ -78,6 +78,21 @@
             </table>
         </div>
         
+        <div align="center">
+            <h1>Notifications</h1>
+            <table border="1">
+                <th>Notification</th>
+                 
+                <c:forEach var="eachNotification" items="${notifications}" varStatus="status">
+                <tr>
+					<td>${eachNotification.message}</td>
+
+                             
+                </tr>
+                </c:forEach>             
+            </table>
+        </div>
+        
         
         
 

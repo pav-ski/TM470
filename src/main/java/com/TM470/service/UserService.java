@@ -3,7 +3,7 @@ package com.TM470.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.TM470.dao.JobDAO;
+
 import com.TM470.dao.UserDAO;
 import com.TM470.domain.Element;
 import com.TM470.domain.Job;
@@ -17,11 +17,15 @@ public class UserService {
 	@Autowired
 	private UserDAO userDAO;
 
-	@Autowired
-	private JobDAO jobDAO;
+
 	
 	@Autowired
-	private LocationAreaService areaService;
+	private JobService jobService;
+	
+	
+	
+	@Autowired
+	private NotificationService notificationService;
 	
 
 	private User sessionUser;
@@ -45,8 +49,27 @@ public class UserService {
 	}
 	
 	public void reportIssue(String description,LocationArea area,Element element,int severity) {
-
-		areaService.createJob(description, element,area, severity, getSessionUser());
+		
+		//Get user in current session
+		User user = getSessionUser();
+		
+		//Create new Job object and assign attribute values
+		Job job = new Job(description,element,area,severity,user);
+		
+		//userService updates current user
+		this.update(user);
+		
+		
+		//jobService is responsible for committing new job to database
+		jobService.saveOrUpdate(job);
+		
+		
+		
+		//notificationService pushes through the notification
+		notificationService.addNewJobNotification(description, area, job.getHasSubscribers());
+		
+		
+		
 		
 	}
 	

@@ -11,23 +11,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.TM470.dao.CompanyDAO;
-import com.TM470.dao.ElementDAO;
-import com.TM470.dao.JobDAO;
-import com.TM470.dao.LocationAreaDAO;
-import com.TM470.dao.LocationDAO;
-import com.TM470.dao.UserDAO;
+
 import com.TM470.domain.Job;
-import com.TM470.domain.User;
 import com.TM470.formModel.UpdateForm;
 import com.TM470.service.JobService;
 import com.TM470.service.UpdateService;
 
 @Controller
 public class UpdateController {
-
-	@Autowired
-	private HomeController homeController;
 	
 	@Autowired
 	private UpdateService updateService;
@@ -35,7 +26,13 @@ public class UpdateController {
 	@Autowired
 	private JobService jobService;
 	
+	////////////////////////////////////////
+	//Methods corresponding to use cases////
+	////////////////////////////////////////
 	
+	//UC 2 - Request Update
+	//Request mapping for update request
+	//Passes on id which will get the job from jobService
 	 @RequestMapping(value = "/requestUpdate", method = RequestMethod.GET)
 	    public ModelAndView requestUpdate(@RequestParam(value = "id", required = false) Integer id,Model model) {
 		 
@@ -51,9 +48,14 @@ public class UpdateController {
 		        return mav;
 	    }
 	 
+	 //UC 2 - Request Update
+	 //Post method for update request form
+	 //UpdateForm is a form backing bean
+	 //ModelMap model holds any parameters passed on from GET method
 	 @RequestMapping(value = "/postRequestUpdate", method = RequestMethod.POST)
      public String postUpdateRequest(@ModelAttribute("updateForm")UpdateForm updateForm, 
  		      BindingResult result, ModelMap model) {
+		 
  	       if (result.hasErrors()) {
  	    	   System.out.println("ERRORS");
      	         return "error";
@@ -63,21 +65,21 @@ public class UpdateController {
          model.addAttribute("message", updateForm.getMessage());
          model.addAttribute("updateAbout", updateForm.getUpdateAbout());
          
-         //Html does not pass objects, element id in form of string is converted to int
-         //and located by elementDAO in database.
-         Job job = jobService.getById(Integer.parseInt(updateForm.getUpdateAbout()));
-         
-         User user = homeController.user;
-         
-         updateService.requestUpdate(user,job,updateForm.getMessage());
+         //Html does not pass objects updateAbout is converted to int to be located by updateService
+         int id = Integer.parseInt(updateForm.getUpdateAbout());
+         String message = updateForm.getMessage();
+
+         //Argument are passed to updateService
+         updateService.requestUpdate(id,message);
 
          
          
           System.out.println("POST submitted");
      
           //Creation and return of new Job object to repository via commit() method
-
-        return "/dashboard";
+          
+          //Returns index to redirect back to front page
+        return "index";
      }
 	 
 	 
@@ -110,18 +112,17 @@ public class UpdateController {
          
          //Html does not pass objects, element id in form of string is converted to int
          //and located by elementDAO in database.
-         Job job = jobService.getById(Integer.parseInt(updateForm.getUpdateAbout()));
-         
-         User user = homeController.user;
-         
-         updateService.postUpdate(user,job,updateForm.getMessage());
+         int id = Integer.parseInt(updateForm.getUpdateAbout());
+
+         String message = updateForm.getMessage();
+         updateService.postUpdate(id,message);
          
          
           System.out.println("POST submitted");
      
      //Creation and return of new Job object to repository via commit() method
 
-        return "/dashboard";
+        return "index";
      }
 	
 	

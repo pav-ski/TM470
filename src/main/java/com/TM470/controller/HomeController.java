@@ -11,11 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.TM470.dao.ElementDAO;
-import com.TM470.dao.JobDAO;
-import com.TM470.dao.LocationAreaDAO;
-import com.TM470.dao.LocationDAO;
-import com.TM470.dao.UserDAO;
 import com.TM470.domain.Company;
 import com.TM470.domain.Guest;
 import com.TM470.domain.Job;
@@ -43,10 +38,8 @@ public class HomeController {
 	private JobService jobService;
 	
 	@Autowired 
-	private LocationAreaDAO locationAreaDAO;
-	
-	@Autowired 
 	private LocationService locationService;
+	
 	
 	public User user;
 	
@@ -63,6 +56,16 @@ public class HomeController {
         
         //Model is inserted with the company list
         model.addObject("companyList", listCompany);
+        
+        //Below code was used to reset all faulty elements after testing
+        //for(Location location: locationService.getLocations()) {
+        //	for(LocationArea area : location.getHasAreas()) {
+        //		for(Element element:area.getHasElements()) {
+        //			elementService.resetElementScore(element);
+        //		}
+        //	}
+        //	
+        //}
         
        
  
@@ -92,19 +95,20 @@ public class HomeController {
 		}
 		
 		
+		//Get all locations for the company and add them to the model
+		Company company = user.getIsUsingSystemOf();
+		Set<Location> locations = company.getHaveLocations();
+		mv.addObject("locations",locations);
+		
+		//Create two lists for the model - active and past jobs
+		//They will be used by the if statements below which determine if user 
+		//is a member of Staff or Guest
+		List<Job> activeJobs = new ArrayList<Job>();
+		List<Job> pastJobs = new ArrayList<Job>();
+		
 		//Staff users should be able to see all active and past jobs
 		//
 		if(user.getClass() == Staff.class) {
-			
-			//Get all locations for the company and add them to the model
-			Company company = user.getIsUsingSystemOf();
-			Set<Location> locations = company.getHaveLocations();
-			mv.addObject("locations",locations);
-			
-			//Create two lists for the model - active and past jobs
-			List<Job> activeJobs = new ArrayList();
-			List<Job> pastJobs = new ArrayList();
-			
 			
 			//Iterate over the jobs from database and separate jobs 
 			//into active and completed jobs
@@ -119,18 +123,37 @@ public class HomeController {
 			//Add both lists to the model
 			mv.addObject("jobs", activeJobs);
 			mv.addObject("pastJobs", pastJobs);
+			mv.addObject("notifications", user.getHasNotifications());
 			}
 			
 			
 		}
 		
-		//If user is a guest only jobs created by user should be visible
+		//If user is a guest only jobs created by guest should be visible
 		else if(user.getClass() == Guest.class) {
-			List<Job> jobs = new ArrayList();
+			
+			//Add all jobs posted by user to the list
+			List<Job> jobs = new ArrayList<Job>();
 			jobs.addAll(user.getPostedA());
-			mv.addObject("jobs", jobs);
+			
+			
+			
+			//Iterate over the jobs which user posted and separate them
+			//into active and completed jobs
+			for(Job eachJob:jobs) {
+				if(eachJob.getActive()==true) {
+					activeJobs.add(eachJob);
+				}
+				else if(eachJob.getActive()==false){
+					pastJobs.add(eachJob);
+				}
+			
+				mv.addObject("jobs", activeJobs);
+				mv.addObject("pastJobs", pastJobs);
+				mv.addObject("notifications", user.getHasNotifications());
 			
 		}
+			}
 		
 		//Return ModelAndView object which holds all the data
 		return mv;
@@ -139,28 +162,20 @@ public class HomeController {
 
 	
 	
-	
+	//Location displays all the rooms available in the location
 	@RequestMapping("/location")
 	public String welcome(
 			@RequestParam(value = "id", required = false) int id,
 			@RequestParam(value = "name") String name,Model model) {
+		
+		//By selecting one of the links id associated with location is passed on 
+		//to locationService which searches for it in database
+		
 		Location location = locationService.getById(id);
-		List<LocationArea> orderedAreas = new ArrayList();
+		List<LocationArea> orderedAreas = new ArrayList<LocationArea>();
 		orderedAreas.addAll(location.getHasAreas());
 		
 		model.addAttribute("areas", orderedAreas);
-		
-		
-		
-		
-		
-		
-
-        
-        
-
- 
-       
 
         return "location";
 		

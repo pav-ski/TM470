@@ -13,7 +13,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -73,39 +73,51 @@ public class Job implements Listener{
 	@OneToMany(fetch = FetchType.EAGER,mappedBy="updateAbout", cascade = CascadeType.ALL)//
 	private Set<Update> hasUpdate;
 	
-	@OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
-	@JoinTable(name="subscribers",joinColumns = @JoinColumn( name="job_id"),inverseJoinColumns = @JoinColumn( name="user_id")
-    )
-	private Set<User> hasSubscribers;
+	
+	//@OneToMany(fetch = FetchType.EAGER,mappedBy="userId", cascade = CascadeType.ALL)
+    //Set<User> hasSubscribers = new HashSet<User>();
+	
+	@ManyToMany(fetch = FetchType.EAGER,mappedBy = "subscribedTo")
+	private Set<User> hasSubscribers = new HashSet<User>();
+	
 	
 	@OneToOne
 	@JoinColumn(name="is_faulty")
 	private Element isFaulty;
 	
-
+	@OneToOne
+	@JoinColumn(name="was_faulty")
+	private Element wasFaulty;
+	
+	//Default empty constructor to be used by Hibernate
 	public Job() {
+		
 		
 	}
 	
+	//UC 1 Report Issue
+	//This constructor will only be used in UC1
 	public Job(String description,Element element,LocationArea area,int severity,User user) {
-		this.hasSubscribers = new HashSet<User>();
 		
-		
+		//Create new Date object and format it
 		Date date = new Date();
 		String modifiedDate= new SimpleDateFormat("dd-MM-yyyy").format(date);
 		
+		//Set attributes and connect links
 		this.setActive(true);
 		this.setDescription(description);
 		this.setIsFaulty(element);
 		this.setSeverity(severity);
-		element.setScore((double)severity);
 		this.setIsFor(area);
 		this.setPostedBy(user);
 		this.setDatePosted(date);
+		
+		//Update score of the faulty element
+		element.setScore((double)severity);
+
 		if(user.getClass()==Guest.class) {
 			this.addObserver(user);
 		}
-		System.out.println(area.getStaff());
 		
 		this.addStaffObservers(area.getStaff());
 		
@@ -117,10 +129,16 @@ public class Job implements Listener{
 	//UC 2 Request Update
 	//
 	public void requestUpdate(String message,User user,Update update) {
+		
+		//Set value for updateRequested
 		this.setUpdateRequested(true);
+		
+		//Add the update object
 		this.hasUpdate.add(update);
-		System.out.println("IN JOB");
+
+		//Set the attributes of update
 		update.setAttributesAfterCreation(message, this);
+		
 		
 		if(user.getClass()==Staff.class) {
 			updateStaff();
@@ -133,7 +151,7 @@ public class Job implements Listener{
 	}
 	
 	
-	//UC 3 Post Update
+		//UC 3 Post Update
 		//
 		public void postUpdate(String message,User user,Update update) {
 			this.setUpdateRequested(false);
@@ -145,7 +163,7 @@ public class Job implements Listener{
 				updateAll();
 			}
 			else if(user.getClass()==Contractor.class) {
-				updateAll();
+				updateStaff();
 			}
 			
 			
@@ -163,14 +181,16 @@ public class Job implements Listener{
 	//Listener interface methods
 	public void addObserver(User user) {
 		this.hasSubscribers.add(user);
+		
 	}
 	
 	public void addStaffObservers(Set<Staff> staff) {
-		System.out.println(staff);
-		System.out.println(this);
+		System.out.println("Staff to be added" + staff);
+		System.out.println("Added to job :" + this);
 		Set<Staff> staffSet = new HashSet<Staff>();
 		staffSet.addAll(staff);
 		this.hasSubscribers.addAll(staffSet);
+		System.out.println("Added to job :" + this.hasSubscribers);
 	}
 	
 	public void removeObserver() {
@@ -300,11 +320,20 @@ public class Job implements Listener{
 
 
 	public Set<User> getHasSubscribers() {
+
 		return hasSubscribers;
 	}
 
-	public void setHasSubscribers(Set<User> hasSubscribers) {
-		this.hasSubscribers = hasSubscribers;
+	public void setHasSubscribers(Set<User> subscribers) {
+		this.hasSubscribers = subscribers;
+	}
+
+	public Element getWasFaulty() {
+		return wasFaulty;
+	}
+
+	public void setWasFaulty(Element wasFaulty) {
+		this.wasFaulty = wasFaulty;
 	}
 
 	

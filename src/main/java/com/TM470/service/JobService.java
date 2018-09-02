@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import com.TM470.dao.JobDAO;
-import com.TM470.dao.UpdateDAO;
 import com.TM470.domain.Element;
 import com.TM470.domain.Job;
 import com.TM470.domain.LocationArea;
@@ -18,9 +18,6 @@ public class JobService {
 	
 	@Autowired
 	private JobDAO jobDAO;
-
-	@Autowired
-	private UpdateDAO updateDAO;
 	
 	@Autowired
 	private ElementService elementService;
@@ -30,6 +27,12 @@ public class JobService {
 	
 	@Autowired
 	private LocationAreaService locationAreaService;
+	
+	@Autowired
+	private NotificationService notificationService;
+	
+	@Autowired
+	private UpdateService updateService;
 	
 	//Methods for interaction with database
 	public void update(Job job) {
@@ -51,36 +54,40 @@ public class JobService {
 	//End of database methods
 	
 	
+	//UC1 Post Job
 	public void postJob(String description,int isFaulty, int severity, int isFor) {
+		
+		//Using DAO's element and area are located by their id's
 		Element element = elementService.getById(isFaulty);
 		LocationArea area = locationAreaService.getById(isFor);
-
 		
+		assert element != null;
+		assert area != null;
+
+		//values converted to objects are passed on to userService to be posted 
+		//this will allow extraction of user in current session
 		userService.reportIssue(description, area, element, severity);
-		System.out.println("Job service element score :" + element.getScore());
-		System.out.println("Job service area score :" + area.getRoomScore());
-		
-		
-		System.out.println(element);
+
+		//elementService adjusts score of the faulty element
 		elementService.adjustFaultyElementScore(element, severity);
-		System.out.println("Element score is :" + element.getScore());
-		System.out.println("area score is :" + area.getRoomScore());
-		
-
-
-		
-		
-		
-		
 		
 	}
 	
-	public void completeJob(Job job) {
+	
+	//UC5 Repair an issue
+	public void completeJob(int id, String message) {
 		
+		
+		Job job = jobDAO.getJobById(id);
+
 		elementService.adjustFaultyElementScore(job.getIsFaulty(), 5);
 		
 		job.completeJob();
 		update(job);
+		
+		updateService.postUpdate(id, message);
+		notificationService.addJobCompletedNotification(job);
+		
 	}
 	
 		//Method assisting job creation with setting attribute values

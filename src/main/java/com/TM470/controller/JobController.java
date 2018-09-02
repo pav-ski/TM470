@@ -13,67 +13,48 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.TM470.dao.CompanyDAO;
-import com.TM470.dao.ElementDAO;
-import com.TM470.dao.JobDAO;
-import com.TM470.dao.LocationAreaDAO;
-import com.TM470.dao.LocationDAO;
-import com.TM470.dao.UserDAO;
-import com.TM470.domain.Element;
+
 import com.TM470.domain.Job;
 import com.TM470.domain.LocationArea;
-import com.TM470.domain.User;
 import com.TM470.formModel.JobForm;
 import com.TM470.formModel.UpdateForm;
-import com.TM470.service.ElementService;
 import com.TM470.service.JobService;
 import com.TM470.service.LocationAreaService;
-import com.TM470.service.LocationService;
-import com.TM470.service.UpdateService;
 
 @Controller
 public class JobController {
 
 	
 	
-	@Autowired
-	private HomeController homeController;
-	
 	@Autowired 
 	private JobService jobService;
 	
 	@Autowired 
-	private UpdateService updateService;
-	
-	@Autowired 
-	private LocationService locationService;
-	
-	@Autowired 
 	private LocationAreaService areaService;
 	
-	@Autowired 
-	private ElementService elementSerivce;
-	
-	
-	 @RequestMapping(value = "/jobForm", method = RequestMethod.GET)
+	////////////////////////////////////////
+	//Methods corresponding to use cases////
+	////////////////////////////////////////
+		//UC1 Report Issue
+	 	@RequestMapping(value = "/jobForm", method = RequestMethod.GET)
 	    public ModelAndView showForm(@RequestParam(value = "id", required = false) int id,Model model) {
 		 
-		 	//jobForm is the page to be viewed.
-		 		ModelAndView mav = new ModelAndView("jobForm","jobModel",new JobForm());
+		 		//jobForm is the page to be viewed.
+		 		ModelAndView modelAndView = new ModelAndView("jobForm","jobModel",new JobForm());
+		 		
+		 		//The area has already been selected, the object is again located by repository and to the model
 		 		LocationArea area = areaService.getById(id);
+		 	
 		 		model.addAttribute("elements", area.getHasElements());
 		 		model.addAttribute("area", area);
 		 		model.addAttribute("areaId", area.getAreaID());
 		 		
-
-
-		 		
-				
-				
-
-		        return mav;
+		 		//Return model and view which will direct to post form
+		        return modelAndView;
 	    }
+	 	
 	 
+	 	//UC1 Report Issue
 	    @RequestMapping(value = "/postJob", method = RequestMethod.POST)
 	        public String submit(@ModelAttribute("job")JobForm jobForm, 
 	    		      BindingResult result, ModelMap model) {
@@ -88,52 +69,23 @@ public class JobController {
 	            model.addAttribute("severity", jobForm.getSeverity());
 	            model.addAttribute("isFor", jobForm.getIsFor());
 	            
-	            System.out.println(jobForm.getDescription());
-	            System.out.println(model.get("description").toString());
+	            //Values from jobForm are parsed to integers (isFaulty and isFor) to allow extraction from database by jobService
+	            //severity is parsed as it should be an integer not a String
+	            //description is left as String  
 	            
-	            jobService.postJob(jobForm.getDescription(), Integer.parseInt(jobForm.getIsFaulty()), jobForm.getSeverity(), Integer.parseInt(model.get("isFor").toString()) );
+	            int isFaultyId = Integer.parseInt(jobForm.getIsFaulty());
+	            int isForId = Integer.parseInt(model.get("isFor").toString());
 	            
-	            //Html does not pass objects, element id in form of string is converted to int
-	            //and located by elementDAO in database.
-	            Element element = elementSerivce.getById(Integer.parseInt(jobForm.getIsFaulty()));
+	            jobService.postJob(jobForm.getDescription(), isFaultyId, jobForm.getSeverity(), isForId );
 	            
-	            //LocationArea is also taken out from the model map, converted to String, parsed to int
-	            //obtained value is then used to get an object form repository
-	            LocationArea area = areaService.getById(Integer.parseInt(model.get("isFor").toString()));
-	            
-	            
-	            String description = jobForm.getDescription();
-	            int severity = jobForm.getSeverity();
-	            
-	            System.out.println(homeController.user);
-	            User user = homeController.user;
-
-	            
-	            
-	             System.out.println("POST submitted");
+	            System.out.println("POST submitted");
 
 
-	           return "/dashboard";
+	           return "index";
 	        }
 	    
-	    @RequestMapping("/viewJobs")
-		public String goToJobs(@RequestParam(value = "id", required = true)int id,Model model) {
-	    	LocationArea area = areaService.getById(id);
-	    	Set<Job> jobs = area.getHasJobs();
-	    	model.addAttribute("jobs", jobs);
-	    	
-	    	return "viewJobs";
-	    }
 	    
-	    @RequestMapping("/viewJob")
-		public String goToJob(@RequestParam(value = "id", required = true)int id,Model model) {
-	    	
-	    	Job job = jobService.getById(id);
-	    	model.addAttribute("job", job);
-	    	
-	    	return "viewJob";
-	    }
-	
+	    //UC5 Repair an issue
 	    @RequestMapping(value = "/completeJob", method = RequestMethod.GET)
 	    public ModelAndView completeJob(@RequestParam(value = "id", required = false) int id,Model model) {
 	    		
@@ -152,6 +104,8 @@ public class JobController {
 		        return mav;
 	    }
 	    
+	    
+	    //UC5 Repair an issue
 	    @RequestMapping(value = "/postCompleteJob", method = RequestMethod.POST)
         public String postCompleteJob(@ModelAttribute("updateForm")UpdateForm updateForm, @ModelAttribute("job")Job job,
     		      BindingResult result, ModelMap model) {
@@ -160,17 +114,46 @@ public class JobController {
         	         return "error";
                   }
 
-    	       User user = homeController.user;
-    	       job = jobService.getById(Integer.parseInt(updateForm.getUpdateAbout()));
-    	       updateService.postUpdate(user, job, updateForm.getMessage());
-    	       jobService.completeJob(job);
+    	       //message and id are taken out of the model
+    	       //id is converted from String to int
+    	       String message = updateForm.getMessage();
+    	       
+    	       int id = Integer.parseInt(updateForm.getUpdateAbout());
+    	       
+    	       //jobService is responsible for completing the job
+    	       jobService.completeJob(id,message);
     	       
     	      
              System.out.println("POST submitted");
 
 
-           return "/dashboard";
+           return "dashboard";
         }
+	    
+	    
+	    //////////////////////////////////////////////
+	    //End of methods corresponding to use cases///
+	    //////////////////////////////////////////////
+	    
+	    //View all jobs for the area
+	    @RequestMapping("/viewJobs")
+		public String goToJobs(@RequestParam(value = "id", required = true)int id,Model model) {
+	    	LocationArea area = areaService.getById(id);
+	    	Set<Job> jobs = area.getHasJobs();
+	    	model.addAttribute("jobs", jobs);
+	    	
+	    	return "viewJobs";
+	    }
+	    
+	    //View one job in detail
+	    @RequestMapping("/viewJob")
+		public String goToJob(@RequestParam(value = "id", required = true)int id,Model model) {
+	    	
+	    	Job job = jobService.getById(id);
+	    	model.addAttribute("job", job);
+	    	
+	    	return "viewJob";
+	    }
 	
 	
 	

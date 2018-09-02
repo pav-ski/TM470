@@ -16,8 +16,6 @@ public class ElementController {
 	@Autowired 
 	private LocationAreaService areaService;
 	
-	@Autowired 
-	private HomeController homeController;
 	
 	
 	
