@@ -20,9 +20,6 @@ area is ${area.id}
     <div>Description of issue: <form:input path="description"/></div>
     <div><form:hidden path="isFor" value="${area.id}" name="areaId"/></div>
 	
-	
-
-	
 	<div>
 	Please select the item from the list:
     <form:select path="isFaulty">
@@ -31,10 +28,6 @@ area is ${area.id}
     </c:forEach>
     </form:select>
 	</div>
-
-
-
-
 
 	<div>Please choose option which best describes the issue:
     <form:select path="severity">
@@ -50,7 +43,6 @@ area is ${area.id}
 	</form:form>
 
 	</div>
-	
 	
 	</body>
 </html>

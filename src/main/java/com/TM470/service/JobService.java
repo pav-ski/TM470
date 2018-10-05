@@ -1,10 +1,11 @@
 package com.TM470.service;
 
 import java.util.List;
+import org.junit.Assert;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 import com.TM470.dao.JobDAO;
 import com.TM470.domain.Element;
@@ -55,21 +56,31 @@ public class JobService {
 	
 	
 	//UC1 Post Job
-	public void postJob(String description,int isFaulty, int severity, int isFor) {
+	public void reportIssue(String description,LocationArea area,Element element,int severity,User user) {
 		
-		//Using DAO's element and area are located by their id's
-		Element element = elementService.getById(isFaulty);
-		LocationArea area = locationAreaService.getById(isFor);
+		//Create new job object
+		Job job = new Job(description,element,area,severity,user);
+		this.saveOrUpdate(job);
 		
-		assert element != null;
+		//Pre-condition checks for addNotification()
+		assert job != null;
+		String type = "NEW JOB";
+		assert type != null;
 		assert area != null;
-
-		//values converted to objects are passed on to userService to be posted 
-		//this will allow extraction of user in current session
-		userService.reportIssue(description, area, element, severity);
-
+		assert description != null;
+		
+		//notificationService pushes through the notification
+		notificationService.addNotification(description, area, job, type);
+		
+		
+		double newScore = (double)severity;
+		
+		//Pre-condition checks for adjustElementScore()
+		assert newScore >= 1.0 && newScore <= 5.0;
+		assert element != null;
+		
 		//elementService adjusts score of the faulty element
-		elementService.adjustFaultyElementScore(element, severity);
+		elementService.adjustElementScore(element, newScore);
 		
 	}
 	
@@ -77,26 +88,56 @@ public class JobService {
 	//UC5 Repair an issue
 	public void completeJob(int id, String message) {
 		
-		
+		//jobDAO locates the job to be fixed in the database
 		Job job = jobDAO.getJobById(id);
+		assert job!=null;
+		
+		
+		//Check if score has been updated
+		//newScore and oldScore will hold values for previous score
+		double newScore = 4.0;
+		double oldScore = job.getIsFaulty().getScore();
+		boolean scoreChanged = false;
+		
+		//if score is the same assertion would always be thrown
+		if(oldScore != newScore) {
+			scoreChanged = true;
 
-		elementService.adjustFaultyElementScore(job.getIsFaulty(), 5);
+		}
 		
+		//Affected element score is updated to 4 (5 is new, 4 is 'as new')
+		//elementService.adjustFaultyElementScore(job.getIsFaulty(), 4);
+		elementService.adjustElementScore(job.getIsFaulty(), newScore);
+		
+		if(scoreChanged) {
+			assert job.getIsFaulty().getScore() != oldScore;
+		}
+		
+		
+		//job object itself is responsible for completion
 		job.completeJob();
+		assert !job.getActive();
+	
+		//update repository
 		update(job);
+		assert !this.getById(id).getActive();
 		
+		assert id >= 0;
+		assert message != null;
+		//post automatic update with the job completion
 		updateService.postUpdate(id, message);
-		notificationService.addJobCompletedNotification(job);
+		
+		String type = "JOB COMPLETED";
+		
+		//create notification to be displayed on dashboards
+		assert job.getWasFor() != null;
+		assert job != null;
+		assert type != null;
+		notificationService.addNotification(message,job.getWasFor(),job, type);
 		
 	}
 	
-		//Method assisting job creation with setting attribute values
-		//Uses JobDAO object to commit new object to database
-		public void setAttributesAndCommit(String description,Element element,int severity,LocationArea area,User user) {
-			
-			
-			
-		}
+
 	
 	
 

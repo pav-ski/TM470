@@ -40,10 +40,6 @@ public class UpdateController {
 		 		ModelAndView mav = new ModelAndView("requestUpdate","updateForm",new UpdateForm());
 		 		Job job = jobService.getById(id);
 		 		model.addAttribute("job", job);
-		 		
-		 		
-				
-				
 
 		        return mav;
 	    }
@@ -69,35 +65,34 @@ public class UpdateController {
          int id = Integer.parseInt(updateForm.getUpdateAbout());
          String message = updateForm.getMessage();
 
+         //Pre-condition checks
+         assert id >= 0;
+         assert message != null;
+         
          //Argument are passed to updateService
          updateService.requestUpdate(id,message);
 
-         
-         
-          System.out.println("POST submitted");
-     
-          //Creation and return of new Job object to repository via commit() method
           
           //Returns index to redirect back to front page
         return "index";
      }
 	 
-	 
+	 //UC3 Request Update
+	 //Method which opens the form for new update
 	 @RequestMapping(value = "/update", method = RequestMethod.GET)
 	    public ModelAndView update(@RequestParam(value = "id", required = false) Integer id,Model model) {
 		 
-
+		 		//Model and view contains update - page ot be viewed
+		 		//and the form backing object - updateForm 
 		 		ModelAndView mav = new ModelAndView("update","updateForm",new UpdateForm());
 		 		Job job = jobService.getById(id);
 		 		model.addAttribute("job", job);
-		 		
-		 		
-				
-				
 
 		        return mav;
 	    }
-	    
+	 
+	 //UC3 Request Update
+	 //Post method for creation of new update
 	 @RequestMapping(value = "/postUpdate", method = RequestMethod.POST)
      public String postUpdate(@ModelAttribute("updateForm")UpdateForm updateForm, 
  		      BindingResult result, ModelMap model) {
@@ -106,7 +101,7 @@ public class UpdateController {
      	         return "error";
                }
  	       
- 	    //The form backing bean is filled with values from the form
+ 	     //The form backing object is filled with values from the form
          model.addAttribute("message", updateForm.getMessage());
          model.addAttribute("updateAbout", updateForm.getUpdateAbout());
          
@@ -115,22 +110,14 @@ public class UpdateController {
          int id = Integer.parseInt(updateForm.getUpdateAbout());
 
          String message = updateForm.getMessage();
+         
+         //pre-condition checks for postUpdate
+         assert id >=0;
+         assert message != null;
          updateService.postUpdate(id,message);
-         
-         
-          System.out.println("POST submitted");
-     
-     //Creation and return of new Job object to repository via commit() method
+
 
         return "index";
      }
-	
-	
-	
-	
-	
-	
-	
-	
 
 }

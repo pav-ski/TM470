@@ -13,11 +13,8 @@ public class UpdateForm{
 	
 
 	private int id;
-	
 	private String message;
-	
 	private Date dateEntered;
-
 	private String updateAbout;
 
 	//Auto-Generated getters and setters

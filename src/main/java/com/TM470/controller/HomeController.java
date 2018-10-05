@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.TM470.domain.Company;
+import com.TM470.domain.Element;
 import com.TM470.domain.Guest;
 import com.TM470.domain.Job;
 import com.TM470.domain.Location;
@@ -19,6 +20,7 @@ import com.TM470.domain.LocationArea;
 import com.TM470.domain.Staff;
 import com.TM470.domain.User;
 import com.TM470.service.CompanyService;
+import com.TM470.service.ElementService;
 import com.TM470.service.JobService;
 import com.TM470.service.LocationService;
 import com.TM470.service.UserService;
@@ -40,11 +42,10 @@ public class HomeController {
 	@Autowired 
 	private LocationService locationService;
 	
-	
 	public User user;
 	
 	
-	//First landing page
+	//First landing page which mocks a user login
 	@RequestMapping("/")
 	public String welcome() {
 
@@ -57,6 +58,8 @@ public class HomeController {
         //Model is inserted with the company list
         model.addObject("companyList", listCompany);
         
+        assert (model != null);
+        
         //Below code was used to reset all faulty elements after testing
         //for(Location location: locationService.getLocations()) {
         //	for(LocationArea area : location.getHasAreas()) {
@@ -64,7 +67,7 @@ public class HomeController {
         //			elementService.resetElementScore(element);
         //		}
         //	}
-        //	
+        	
         //}
         
        
@@ -74,6 +77,8 @@ public class HomeController {
 		
 	}
 	
+	//Dashboard displays the active jobs, past jobs, connected Location objects and 
+	//user notifications
 	@RequestMapping("/dashboard")
 	public ModelAndView dashboard(
 			@RequestParam(value = "id", required = false) int id,Model model) {
@@ -93,6 +98,7 @@ public class HomeController {
 			userService.setSessionUser(id);
 			user = userService.getById(id);
 		}
+		
 		
 		
 		//Get all locations for the company and add them to the model
@@ -120,7 +126,7 @@ public class HomeController {
 					pastJobs.add(eachJob);
 				}
 				
-			//Add both lists to the model
+			//Add lists to the model and view object
 			mv.addObject("jobs", activeJobs);
 			mv.addObject("pastJobs", pastJobs);
 			mv.addObject("notifications", user.getHasNotifications());

@@ -15,19 +15,10 @@ public class CompanyService {
 	@Autowired
 	private CompanyDAO companyDAO;
 
-
+	
+	//get a list of companies
 	public List<Company> getCompanyList(){
 		return companyDAO.list();
 	}
 	
-	
-
-
-	
-	
-	
-	
-	
-	
-
 }

@@ -35,48 +35,67 @@ public class UpdateService {
 		//Obtain user in current session
 		User user = userService.getSessionUser();
 		
+
+		
 		//Create new UpdateRequest object
-		UpdateRequest update = new UpdateRequest();
-		
-		//pass on arguments to user who will initiate request update in the domain
-		user.requestUpdate(job, message,update);
-		
+		UpdateRequest update = new UpdateRequest(message,job, user);
+
+
 		//Commit changes to the database
 		jobService.update(job);
 		
 		//As we are in updateService updateDAO can be accessed directly
 		updateDAO.saveOrUpdate(update);
 		
+		//Post-condtion checks and pre-condtion checks for addNotification();
+		assert job != null;
+		assert user != null;
+		assert update != null;
+		assert message != null;
+		
 		//Notification service is responsible for creation of new notification
-		notificationService.addNewUpdateRequestNotification(message, job);
+		notificationService.addNotification(message,job.getIsFor(), job, "NEW UPDATE REQUEST");
 
 		
 		
 	}
 	
+	//Posts update for the job matching provided id 
 	public void postUpdate(int id,String message) {
 		
-		System.out.println("******************IN THE UPDATE SERVICE*********************");
-		
+		//Get the user in current session
 		User user = userService.getSessionUser();
 		
-		Update update = new Update();
-		
+		//Locate the job
 		Job job = jobService.getById(id);
 		
-		user.postUpdate(job, message,update);
+		//Create new update with message for a job
+		Update update = new Update(message,job, user);
 		
+		//Post-condtion checks and pre-condtion checks for addNotification();
+		assert job != null;
+		assert user != null;
+		assert update != null;
+		assert message != null;
+				
+		//Update job and save or update the Update object
 		jobService.update(job);
-		System.out.println("******************IN THE UPDATE SERVICE to QUCIK*********************");
 		updateDAO.saveOrUpdate(update);
 		
-		notificationService.addUpdateNotification(message, job);
+		String type;
+		
+		//Create new notification for users
+		if(job.getActive()) {
+		type = "NEW UPDATE";
+		assert job.getIsFor() != null;
+		notificationService.addNotification(message,job.getIsFor(), job,"NEW UPDATE");
+		}
+		else if(!job.getActive()) {
+		type = "JOB COMPLETED";
+		assert job.getWasFor() != null;
+		notificationService.addNotification(message,job.getWasFor(), job,"NEW UPDATE");
+		}
 
-		
-		
 	}
-	
-	
-	
 
 }

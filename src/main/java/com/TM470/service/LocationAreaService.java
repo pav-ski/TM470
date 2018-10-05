@@ -28,16 +28,25 @@ public class LocationAreaService {
 	}
 	
 	
+	//Method which prompts LocationArea provided as parameter to update its score
 	public void updateAreaScore(LocationArea area) {
-		Double score = 0.0;
-		for(Element eachElement:area.getHasElements()) {
-			System.out.println("score =" + eachElement.getScore());
-			score = score + eachElement.getScore();
-		}
-		System.out.println("final :" + score + "divided by " + area.getHasElements().size());
-		area.setRoomScore(score/area.getHasElements().size());
-		System.out.println(" = " + area.getRoomScore());
+		
+		//double value which will check post-condition
+		double oldScore = area.getRoomScore();
+		
+		//Let area know to update its score
+		area.updateScore();
+		
+		//Update the area
 		update(area);
+		
+		//Post-condition check
+		assert oldScore != area.getRoomScore();
+		
+		
+
+		
+		
 	}
 	
 	

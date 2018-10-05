@@ -25,23 +25,31 @@ public class ElementService {
 		return elementDAO.getElementById(id);
 	}
 	
-
-	public void adjustFaultyElementScore(Element element,int severity) {
-		double score = element.getScore();
-		if(score-severity >= 0) {
-			element.setScore(score);
-		}
-		else if(score-severity < 0) {
-			element.setScore(0.0);
-		}
+	
+	
+	//UC11 Update Score
+	public void adjustElementScore(Element element,double newScore) {
 		
-		areaService.updateAreaScore(element.getIsIn());
+		//Set the new score
+		element.setScore(newScore);
+		
+		//Update Repository
 		update(element);
 		
+		//Post-condition checks
+		assert element.getScore()==newScore;
 		
-		System.out.println("Updated area score is: " + element.getIsIn().getRoomScore() );
+		//Pre-condition check for updateAreaScore
+		assert element.getIsIn() != null;
+		
+		//Notify areaService to update LocationArea score in which element was located 
+		areaService.updateAreaScore(element.getIsIn());
+		
+		
+		
 	}
 	
+	//Below method was used to revert scores after tests
 	public void resetElementScore(Element element) {
 		double score = 5.0;
 		element.setScore(score);

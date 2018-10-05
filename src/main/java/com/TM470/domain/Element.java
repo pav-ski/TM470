@@ -41,9 +41,15 @@ public abstract class Element{
 	@JoinColumn(name="is_in",nullable=false)
 	private LocationArea isIn;
 	
+	public void adjustFaultyElementScore(double newScore) {
+		
+		double score = this.getScore();
+		this.setScore(newScore);
+		assert this.getScore()==newScore;
+		
+		
+	}
 	
-	
-
 	
 	//Auto-Generated setters and getters
 	//
@@ -87,6 +93,28 @@ public abstract class Element{
 
 	public void setIsIn(LocationArea locationArea) {
 		this.isIn = locationArea;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + id;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Element other = (Element) obj;
+		if (id != other.id)
+			return false;
+		return true;
 	}
 	
 	

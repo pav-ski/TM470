@@ -4,8 +4,10 @@
         "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>       
   <session-factory>
+  
     <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
     <property name="show_sql">false</property>
+    <!-- Declaration of all mapped Entities -->
     <mapping class="com.TM470.domain.Company"/>
     <mapping class="com.TM470.domain.Location"/>
     <mapping class="com.TM470.domain.LocationArea"/>
@@ -23,6 +25,6 @@
     <mapping class="com.TM470.domain.Update"/>
     <mapping class="com.TM470.domain.UpdateRequest"/>
     <mapping class="com.TM470.domain.Notification"/>
-    <!--  <mapping resource="company.hbm.xml"/>-->
+
   </session-factory>
 </hibernate-configuration>

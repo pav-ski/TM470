@@ -42,9 +42,13 @@ public class Update{
 	@JoinColumn(name="update_about")
 	private Job updateAbout;
 	
-	//set attributes
-	public void setAttributesAfterCreation(String message,Job job) {
+	//Default no arguments constructor for Hibernate
+	public Update() {
 		
+	}
+	
+	//Parametrised constructor for use by the system
+	public Update(String message, Job job, User user) {
 		Date date = new Date();
 		String modifiedDate= new SimpleDateFormat("dd-MM-yyyy").format(date);
 		
@@ -52,8 +56,10 @@ public class Update{
 		this.setUpdateAbout(job);
 		this.setDateEntered(date);
 		
+		job.postUpdate(message, user, this);
+		
 	}
-
+	
 	
 	//Auto-Generated getters and setters
 	//
@@ -89,6 +95,30 @@ public class Update{
 
 	public void setUpdateAbout(Job updateAbout) {
 		this.updateAbout = updateAbout;
+	}
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + id;
+		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Update other = (Update) obj;
+		if (id != other.id)
+			return false;
+		return true;
 	} 
 	
 	

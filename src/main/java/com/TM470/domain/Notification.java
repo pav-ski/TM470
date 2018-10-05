@@ -37,31 +37,44 @@ public class Notification{
 		
 	}
 	
-	public Notification(Set<User> users) {
-		
-		this.setNotificationFor(users);
-		
-		for(User eachUser: users) {
-			eachUser.hasNotifications.add(this);
-		}
-		
-	}
 	
-	public Notification(String message,Set<User> users) {
+	public Notification(String message,Set<User> users,String type,Job job) {
 		
-
+		//Set message to provided message
 		this.setMessage(message);
+		//Post condition check
+		assert this.getMessage()==message;
+
+		//Link the subscribed users
 		this.setNotificationFor(users);
 		
+		//Switch for how the message should be formatted
+		switch(type) {
+		case "NEW JOB":this.formatNewJobNotification(job);break;
+		case "JOB COMPLETED":this.formatJobCompletedNotification(job);break;
+		case "NEW UPDATE REQUEST":this.formatNewUpdateRequestNotification(job);break;
+		case "NEW UPDATE":this.formatNewUpdateNotification(job);break;
+		}
+		
+		//Iterate over subscribed users and link them to new notification
 		for(User eachUser: users) {
 			eachUser.hasNotifications.add(this);
+			
+			//Post conditions check
+			assert eachUser.hasNotifications.contains(this);
 		}
+		
+		//Post condition checks
+		assert this.getNotificationFor().containsAll(users);
+
+		
 	}
 	
-	public void formatNewJobNotification(LocationArea area) {
+	public void formatNewJobNotification(Job job) {
+		System.out.println("In new job notification");
 		
-		this.setMessage("New issue has been posted for location" + area.getIsInLocation().getName() + 
-				" in area " + area.getAreaID() + " ,the description is : " + message);
+		this.setMessage("New issue has been posted for location" +  job.getIsFor().getIsInLocation().getName() + 
+				" in area " + job.getIsFor().getAreaID() + " ,the description is : " + message);
 		
 	}
 	
@@ -80,8 +93,8 @@ public class Notification{
 	}
 	
 	public void formatNewUpdateNotification(Job job) {
-		
-		this.setMessage("A new update has been added to job id:  " + job.getJobId());
+		System.out.println("In new udpate notificaiton setter");
+		this.setMessage("A new update has been added to job id:  " + job.getJobId() + "  with message :" + message);
 	}
 	
 	
@@ -108,6 +121,34 @@ public class Notification{
 	public void setNotificationFor(Set<User> notificationFor) {
 		this.notificationFor = notificationFor;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + id;
+		return result;
+	}
+
+
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Notification other = (Notification) obj;
+		if (id != other.id)
+			return false;
+		return true;
+	}
+
 	
 
 

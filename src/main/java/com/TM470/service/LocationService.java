@@ -14,9 +14,7 @@ public class LocationService {
 	
 	@Autowired
 	private LocationDAO locationDAO;
-	
 
-	
 	public void update(Location location) {
 		locationDAO.updateLocation(location);
 	}
@@ -28,11 +26,5 @@ public class LocationService {
 	public List<Location> getLocations() {
 		return locationDAO.list();
 	}
-
-	
-	
-	
-	
-	
 
 }

@@ -55,10 +55,34 @@ public abstract class LocationArea{
 	private Set<Element> hasElements;
 	
 
-	
+	//Gets all the staff in the company
 	public Set<Staff> getStaff() {
-		System.out.println(this.getIsInLocation().getBelongsTo().getEmploys());
+
 		return this.getIsInLocation().getBelongsTo().getEmploys();
+	}
+	
+	public void updateScore() {
+		
+		//New variable score - it will add score for each element in the area
+		Double elementScoreSum = 0.0;
+		
+		//Save the previous score to make sure it has been changed later
+		double previousScore = this.getRoomScore();
+		
+				//For each element in the area add all the scores of the elements
+				for(Element eachElement:this.getHasElements()) {
+					//Score is a sum of element scores
+					elementScoreSum = elementScoreSum + eachElement.getScore();
+				}
+				
+				//Set the new score for the area by dividing the sum by the number of elements
+				this.setRoomScore(elementScoreSum/this.getHasElements().size());
+				
+				//Post-condition checks
+				assert(this.getRoomScore()!= previousScore);
+				assert this.getRoomScore() > 0 && this.getRoomScore() <= 5.0;
+		
+		
 	}
 	
 	//Auto-Generated setters and getters
@@ -127,6 +151,28 @@ public abstract class LocationArea{
 
 	public void setRoomScore(Double roomScore) {
 		this.roomScore = roomScore;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + id;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		LocationArea other = (LocationArea) obj;
+		if (id != other.id)
+			return false;
+		return true;
 	}
 
 	

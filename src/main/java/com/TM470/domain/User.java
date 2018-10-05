@@ -64,21 +64,7 @@ public abstract class User{
 	private Set<Job> subscribedTo = new HashSet<>();
 
 
-	
-	//UC2 Request Update 
-	public void requestUpdate(Job job,String message,Update update) {
-		
-		//Send message to linked job object
-		job.requestUpdate(message,this,update);
-		
-	}
 
-	//UC3 Post Update 
-		public void postUpdate(Job job,String message,Update update) {
-			System.out.println("IN USER");
-			job.postUpdate(message,this,update);
-			
-		}
 	
 		
 		
@@ -145,6 +131,28 @@ public abstract class User{
 
 	public void setHasNotifications(Set<Notification> hasNotification) {
 		this.hasNotifications = hasNotification;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + userId;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		User other = (User) obj;
+		if (userId != other.userId)
+			return false;
+		return true;
 	}
 
 

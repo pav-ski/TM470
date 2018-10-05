@@ -3,7 +3,6 @@ package com.TM470.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 import com.TM470.dao.UserDAO;
 import com.TM470.domain.Element;
 import com.TM470.domain.Job;
@@ -17,15 +16,17 @@ public class UserService {
 	@Autowired
 	private UserDAO userDAO;
 
-
+	@Autowired
+	private NotificationService notificationService;
+	
+	@Autowired
+	private ElementService elementService;
+	
+	@Autowired
+	private LocationAreaService locationAreaService;
 	
 	@Autowired
 	private JobService jobService;
-	
-	
-	
-	@Autowired
-	private NotificationService notificationService;
 	
 
 	private User sessionUser;
@@ -48,35 +49,37 @@ public class UserService {
 		this.sessionUser = userDAO.getUserById(id);
 	}
 	
-	public void reportIssue(String description,LocationArea area,Element element,int severity) {
+	//UC1 Report Issue
+	public void postJob(String description,int isFaulty, int severity, int isFor) {
 		
 		//Get user in current session
 		User user = getSessionUser();
 		
-		//Create new Job object and assign attribute values
-		Job job = new Job(description,element,area,severity,user);
+		//Get the element by its id
+		Element element = elementService.getById(isFaulty);
 		
-		//userService updates current user
+		//Get the location area by its id
+		LocationArea area = locationAreaService.getById(isFor);
+		
+		//Pre-condition checks for reportIssue()
+		assert area != null;
+		assert (element.getIsIn().equals(area));
+		assert severity >=1 && severity <=5;
+		assert user != null;
+		assert element != null;
+		
+		//forward reportIssue message to jobService for object creation
+		jobService.reportIssue(description, area, element, severity, user);
+		
+		//Update and refresh user
 		this.update(user);
-		
-		
-		//jobService is responsible for committing new job to database
-		jobService.saveOrUpdate(job);
-		
-		
-		
-		//notificationService pushes through the notification
-		notificationService.addNewJobNotification(description, area, job.getHasSubscribers());
-		
-		
-		
-		
+		this.refresh(user);
+
 	}
 	
+	public void refresh(User user) {
 	
-	
-	
-	
-	
+		userDAO.refresh(user);
+	}
 
 }

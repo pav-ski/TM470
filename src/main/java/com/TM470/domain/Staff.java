@@ -31,7 +31,7 @@ public class Staff extends User{
 	@JoinColumn(name="works_for",nullable=false)
 	private Company worksFor;
 	
-	@OneToMany(mappedBy="willBeFixedBy", cascade = CascadeType.ALL)//fetch = FetchType.EAGER, 
+	@OneToMany(mappedBy="willBeFixedBy", cascade = CascadeType.ALL) 
 	private List<Job> isAttendingTo;
 	
 	@OneToMany

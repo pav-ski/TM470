@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-
 import com.TM470.domain.Job;
 import com.TM470.domain.LocationArea;
 import com.TM470.formModel.JobForm;
 import com.TM470.formModel.UpdateForm;
 import com.TM470.service.JobService;
 import com.TM470.service.LocationAreaService;
+import com.TM470.service.UserService;
 
 @Controller
 public class JobController {
@@ -32,17 +32,22 @@ public class JobController {
 	@Autowired 
 	private LocationAreaService areaService;
 	
+	@Autowired 
+	private UserService userService;
+	
 	////////////////////////////////////////
 	//Methods corresponding to use cases////
 	////////////////////////////////////////
-		//UC1 Report Issue
+	
+	
+		//UC1 Report Issue - GET
 	 	@RequestMapping(value = "/jobForm", method = RequestMethod.GET)
 	    public ModelAndView showForm(@RequestParam(value = "id", required = false) int id,Model model) {
 		 
 		 		//jobForm is the page to be viewed.
 		 		ModelAndView modelAndView = new ModelAndView("jobForm","jobModel",new JobForm());
 		 		
-		 		//The area has already been selected, the object is again located by repository and to the model
+		 		//The area has already been selected, the object is again located by repository 
 		 		LocationArea area = areaService.getById(id);
 		 	
 		 		model.addAttribute("elements", area.getHasElements());
@@ -54,7 +59,8 @@ public class JobController {
 	    }
 	 	
 	 
-	 	//UC1 Report Issue
+	 	//UC1 Report Issue - POST
+	 	//The form populates form backing bean jobForm with attribute values filled in by user
 	    @RequestMapping(value = "/postJob", method = RequestMethod.POST)
 	        public String submit(@ModelAttribute("job")JobForm jobForm, 
 	    		      BindingResult result, ModelMap model) {
@@ -76,36 +82,39 @@ public class JobController {
 	            int isFaultyId = Integer.parseInt(jobForm.getIsFaulty());
 	            int isForId = Integer.parseInt(model.get("isFor").toString());
 	            
-	            jobService.postJob(jobForm.getDescription(), isFaultyId, jobForm.getSeverity(), isForId );
+	            assert isFaultyId >= 0;
+	            assert isForId >= 0;
+	            assert jobForm.getSeverity() >= 1 && jobForm.getSeverity() <=5;
+	            assert jobForm.getDescription() != null;
 	            
-	            System.out.println("POST submitted");
-
+	            userService.postJob(jobForm.getDescription(), isFaultyId, jobForm.getSeverity(), isForId );
 
 	           return "index";
 	        }
 	    
 	    
-	    //UC5 Repair an issue
+	    //UC5 Repair an issue - GET method
+	    //By selecting the job link passes on the id of the selected job
 	    @RequestMapping(value = "/completeJob", method = RequestMethod.GET)
 	    public ModelAndView completeJob(@RequestParam(value = "id", required = false) int id,Model model) {
 	    		
 	    	
 	    		
-		 	//jobForm is the page to be viewed.
+		 		//jobForm is the page to be viewed.
+	    		//updateForm is the form backing bean
 		 		ModelAndView mav = new ModelAndView("completeJob","updateForm",new UpdateForm());
+		 		
+		 		//Get the job from repository by its id and add it to the ModelAndView
 		 		Job job = jobService.getById(id);
 		 		mav.addObject("job", job);
-
-		 		System.out.println(job);
 		 		
-				
-				
-
+		 		//Return ModelAndView object with job and form backing bean inserted
 		        return mav;
 	    }
 	    
 	    
-	    //UC5 Repair an issue
+	    //UC5 Repair an issue - POST method
+	    //
 	    @RequestMapping(value = "/postCompleteJob", method = RequestMethod.POST)
         public String postCompleteJob(@ModelAttribute("updateForm")UpdateForm updateForm, @ModelAttribute("job")Job job,
     		      BindingResult result, ModelMap model) {
@@ -116,23 +125,26 @@ public class JobController {
 
     	       //message and id are taken out of the model
     	       //id is converted from String to int
-    	       String message = updateForm.getMessage();
-    	       
+    	       String message = updateForm.getMessage();    	       
     	       int id = Integer.parseInt(updateForm.getUpdateAbout());
-    	       
+
+    	       //Pre-condition checks for completeJob()
+    	       assert id >=0;
+    	       assert message != null;
+
     	       //jobService is responsible for completing the job
     	       jobService.completeJob(id,message);
     	       
-    	      
-             System.out.println("POST submitted");
-
-
            return "dashboard";
         }
 	    
 	    
 	    //////////////////////////////////////////////
 	    //End of methods corresponding to use cases///
+	    //////////////////////////////////////////////
+	    //******************************************//
+	    //////////////////////////////////////////////
+	    //Utility Methods for displaying content   ///
 	    //////////////////////////////////////////////
 	    
 	    //View all jobs for the area
@@ -155,7 +167,9 @@ public class JobController {
 	    	return "viewJob";
 	    }
 	
-	
+	    /////////////////////////////////////////////////////
+	    //End of Utility Methods for displaying content   ///
+	    /////////////////////////////////////////////////////
 	
 	
 	

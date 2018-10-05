@@ -91,6 +91,13 @@ public class UserDAOImpl implements UserDAO{
     	return guest;
     }
     
+    @Override
+    @Transactional
+    public void refresh(User user) {
+    	Session session = this.sessionFactory.getCurrentSession();
+    	session.refresh(user);
+    }
+    
 
 	
 }

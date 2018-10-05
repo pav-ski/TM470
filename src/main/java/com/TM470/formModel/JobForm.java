@@ -14,47 +14,18 @@ import com.TM470.domain.User;
 @Component
 public class JobForm {
 
-		
-		
-		
-		
 		private int jobId;
-
-		
 		private String description;
-		
-		
 		private Date datePosted;
-		
-		
 		private Boolean active;
-		
-		
 		private int severity;
-		
-		
 		private Boolean updateRequested;
-		
-		
 		private String isFor;
-		
-		
 		private String wasFor;	
-
-
-		
 		private User postedBy;
-		
-		
 		private Staff willBeFixedBy;
-
-		
 		private Contractor requires; 
-		
-		
 		private Set<Update> hasUpdate;
-		
-		
 		private String isFaulty;
 		
 		

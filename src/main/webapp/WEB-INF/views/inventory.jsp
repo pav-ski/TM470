@@ -19,6 +19,7 @@ Welcome to inventory page<br>
             <table border="1">
                 <th>Element Id</th>
                  <th>Element Description</th>
+                 <th>Element Score</th>
                  <th>Remove Element</th>
                  <th>Change Element</th>
                 <c:forEach var="element" items="${elements}">
@@ -26,6 +27,7 @@ Welcome to inventory page<br>
 
                     <td>${element.id}</td>
                     <td>${element.description}</td> 
+                    <td>${element.score}</td>
                     <td><a href=""><input type="submit" value="Remove - stud" name="button" /></a></td> 
                     <td><a href=""><input type="submit" value="Change - stud" name="button" /></a></td>      
                 </tr>

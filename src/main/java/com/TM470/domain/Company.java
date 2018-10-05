@@ -29,13 +29,13 @@ public class Company{
 	@Column(name="name")
 	private String name;
 	
-	@OneToMany(fetch = FetchType.EAGER, mappedBy="belongsTo", cascade = CascadeType.ALL)//fetch = FetchType.EAGER, 
+	@OneToMany(fetch = FetchType.EAGER, mappedBy="belongsTo", cascade = CascadeType.ALL)
 	private Set<Location> haveLocations;
 	
-	@OneToMany(fetch = FetchType.EAGER, mappedBy="isUsingSystemOf", cascade = CascadeType.ALL)//fetch = FetchType.EAGER, 
+	@OneToMany(fetch = FetchType.EAGER, mappedBy="isUsingSystemOf", cascade = CascadeType.ALL)
 	private Set<User> hasUsers;
 	
-	@OneToMany(fetch = FetchType.EAGER, mappedBy="worksFor", cascade = CascadeType.ALL)//fetch = FetchType.EAGER, 
+	@OneToMany(fetch = FetchType.EAGER, mappedBy="worksFor", cascade = CascadeType.ALL)
 	private Set<Staff> employs;
 	
 	//Add another location to haveLocations
@@ -89,6 +89,32 @@ public class Company{
 
 	public void setEmploys(Set<Staff> employs) {
 		this.employs = employs;
+	}
+
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + id;
+		return result;
+	}
+
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Company other = (Company) obj;
+		if (id != other.id)
+			return false;
+		return true;
 	}
 	
 	

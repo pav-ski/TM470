@@ -22,7 +22,7 @@ public class Contractor extends User{
 	@Column(name="on_site")
 	private Boolean onSite;
 	
-	@OneToMany(mappedBy="requires", cascade = CascadeType.ALL)//fetch = FetchType.EAGER, 
+	@OneToMany(mappedBy="requires", cascade = CascadeType.ALL)
 	private Set<Job> outcallTo;	
 
 	

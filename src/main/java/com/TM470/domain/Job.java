@@ -70,12 +70,8 @@ public class Job implements Listener{
 	@JoinColumn(name="requires")
 	private Contractor requires; 
 	
-	@OneToMany(fetch = FetchType.EAGER,mappedBy="updateAbout", cascade = CascadeType.ALL)//
+	@OneToMany(fetch = FetchType.EAGER,mappedBy="updateAbout", cascade = CascadeType.ALL)
 	private Set<Update> hasUpdate;
-	
-	
-	//@OneToMany(fetch = FetchType.EAGER,mappedBy="userId", cascade = CascadeType.ALL)
-    //Set<User> hasSubscribers = new HashSet<User>();
 	
 	@ManyToMany(fetch = FetchType.EAGER,mappedBy = "subscribedTo")
 	private Set<User> hasSubscribers = new HashSet<User>();
@@ -99,21 +95,34 @@ public class Job implements Listener{
 	//This constructor will only be used in UC1
 	public Job(String description,Element element,LocationArea area,int severity,User user) {
 		
+		
+		
 		//Create new Date object and format it
 		Date date = new Date();
 		String modifiedDate= new SimpleDateFormat("dd-MM-yyyy").format(date);
 		
 		//Set attributes and connect links
 		this.setActive(true);
-		this.setDescription(description);
-		this.setIsFaulty(element);
-		this.setSeverity(severity);
-		this.setIsFor(area);
-		this.setPostedBy(user);
-		this.setDatePosted(date);
+		assert this.getActive();
 		
-		//Update score of the faulty element
-		element.setScore((double)severity);
+		this.setDescription(description);
+		assert this.getDescription()==description;
+		
+		this.setIsFaulty(element);
+		assert this.getIsFaulty() != null && Element.class.isAssignableFrom(this.getIsFaulty().getClass());
+		
+		this.setSeverity(severity);
+		assert this.getSeverity() == severity;
+		
+		this.setIsFor(area);
+		assert this.getIsFor() != null && LocationArea.class.isAssignableFrom(this.getIsFor().getClass());
+		
+		this.setPostedBy(user);
+		assert this.getPostedBy() != null && User.class.isAssignableFrom(this.getPostedBy().getClass());
+		
+		this.setDatePosted(date);
+
+
 
 		if(user.getClass()==Guest.class) {
 			this.addObserver(user);
@@ -132,49 +141,44 @@ public class Job implements Listener{
 		
 		//Set value for updateRequested
 		this.setUpdateRequested(true);
+		assert this.getUpdateRequested();
 		
 		//Add the update object
 		this.hasUpdate.add(update);
+		assert this.getHasUpdate().contains(update);
 
-		//Set the attributes of update
-		update.setAttributesAfterCreation(message, this);
-		
-		
-		if(user.getClass()==Staff.class) {
-			updateStaff();
-		}
-		else if(user.getClass()==Guest.class) {
-			updateAll();
-		}
-		
-		
 	}
 	
 	
-		//UC 3 Post Update
-		//
-		public void postUpdate(String message,User user,Update update) {
+	//UC 3 Post Update
+	//
+	public void postUpdate(String message,User user,Update update) {
+		
 			this.setUpdateRequested(false);
-			this.hasUpdate.add(update);
-			System.out.println("IN JOB");
-			update.setAttributesAfterCreation(message, this);
+			assert !this.getUpdateRequested();
 			
-			if(user.getClass()==Staff.class) {
-				updateAll();
-			}
-			else if(user.getClass()==Contractor.class) {
-				updateStaff();
-			}
+			this.hasUpdate.add(update);
 			
 			
 		}
 		
-		//UC 5 Repair issue
-		public void completeJob() {
+	//UC 5 Repair issue
+	public void completeJob() {
 			
 			setActive(false);
+			assert !this.getActive();
+			
 			setWasFor(getIsFor());
+			assert getIsFor().equals(getWasFor());
+			
 			setIsFor(null);
+			assert getIsFor()==null;
+			
+			this.setWasFaulty(isFaulty);
+			assert this.getWasFaulty().equals(this.getIsFaulty());
+			
+			setIsFaulty(null);
+			assert getIsFaulty()==null;
 			
 		}
 	
@@ -185,12 +189,10 @@ public class Job implements Listener{
 	}
 	
 	public void addStaffObservers(Set<Staff> staff) {
-		System.out.println("Staff to be added" + staff);
-		System.out.println("Added to job :" + this);
+
 		Set<Staff> staffSet = new HashSet<Staff>();
 		staffSet.addAll(staff);
-		this.hasSubscribers.addAll(staffSet);
-		System.out.println("Added to job :" + this.hasSubscribers);
+
 	}
 	
 	public void removeObserver() {
@@ -198,17 +200,26 @@ public class Job implements Listener{
 	}
 	
 	
-	public void updateStaff() {
+	//method which derives the association to all observers
+	public Set<User> getObservers(){
+		
+		Set<User> observers = new HashSet<User>();
+		observers.add(postedBy);
+		
+		if(this.getActive()) {
+			observers.addAll(this.getIsFor().getStaff());	
+			
+		}
+		else if(!this.getActive()) {
+			observers.addAll(this.getWasFor().getStaff());	
+		}
+
+		assert observers != null;
+		return observers;
 		
 	}
 	
-	public void updateGuest() {
-		
-	}
-	
-	public void updateAll() {
-		
-	}
+
 	//End of Listener interface methods
 	
 	//Auto-Generated getters and setters
@@ -334,6 +345,28 @@ public class Job implements Listener{
 
 	public void setWasFaulty(Element wasFaulty) {
 		this.wasFaulty = wasFaulty;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + jobId;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Job other = (Job) obj;
+		if (jobId != other.jobId)
+			return false;
+		return true;
 	}
 
 	

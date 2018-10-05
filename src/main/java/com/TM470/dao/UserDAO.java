@@ -16,5 +16,6 @@ public interface UserDAO {
 	public void removeUser(int id);
 	public Guest getGuest(int id);
 	public Staff getStaff(int id);
+	public void refresh(User user);
 
 }

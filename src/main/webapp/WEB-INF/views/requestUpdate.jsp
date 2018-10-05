@@ -18,10 +18,6 @@
 	<input type="submit">
 	</form:form>
 </div>
-        
-        
-        
-
-
+              
 </body>
 </html>
